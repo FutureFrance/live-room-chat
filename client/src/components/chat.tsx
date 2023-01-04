@@ -8,7 +8,7 @@ const Chat = () => {
     const [user, setUser] = useState<string>("");
     const [room, setRoom] = useState<string>("");
     const [messageContent, setMessageContent] = useState<string>("");
-    const [messagesList, setMessagesList] = useState<IMessage[]>([{_id: "", nickname: "", content: ""}]);
+    const [messagesList, setMessagesList] = useState<IMessage[]>([{} as IMessage]);
     const [messagesLoading, setMessagesLoading] = useState<boolean>(true);
 
     async function sendMessage() {
@@ -19,14 +19,18 @@ const Chat = () => {
     useEffect(() => {
         const ReceiveMessages = (data: any): void => {
             console.log("Got data from a member group", data)
-            data.returnMessage.nickname = data.username; 
+            console.log(data.returnMessage)
+            data.returnMessage.owner = {username: ""}
+            data.returnMessage.owner.username = data.username; 
 
             setMessagesList(prev => [...prev, {...data.returnMessage}]);  
         };
 
         const SendMessageResponse = (data: IMessageToClient): void => {
             console.log("received the message from backend");
-            data.returnMessage.nickname = data.username; 
+            console.log(data)
+            data.returnMessage.owner = {username: ""}
+            data.returnMessage.owner.username = data.username; 
 
             setMessagesList(prev => [...prev, {...data.returnMessage}]); 
             setMessageContent("");
@@ -65,7 +69,7 @@ const Chat = () => {
                     {!messagesLoading 
                     ?   <>
                             {messagesList.map((message) => {
-                                return <Message content={message.content} owner={message.nickname} id={message._id} current_user={user} key={message._id}/>
+                                return <Message content={message.content} owner={message.owner.username} id={message._id} current_user={user} key={message._id}/>
                             })}
                         </>
                     :   <p>Loading.....</p>

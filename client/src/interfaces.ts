@@ -2,7 +2,7 @@ import { Socket } from "socket.io-client"
 
 export interface IMessage {
     content: string,
-    nickname: string,
+    owner: any, // IUser or string
     _id: string
 }
 

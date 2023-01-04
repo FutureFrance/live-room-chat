@@ -27,23 +27,8 @@ export const verifyUser = async (token: string, room_id: string) => {
 
         if (!ROOM) throw new Error("User is not a member of this room");
 
-        const MESSAGES = await MessageModel.find({room: ROOM._id}).lean()
+        const MESSAGES = await MessageModel.find({room: ROOM._id}).populate('owner', {password: 0, _id: 0})
         .catch(err => {throw new Error("Fatal error when searching for messages in this room")});
-        
-        let userIds = MESSAGES.map(message => String(message.owner));
-
-        for (let i = 0; i < userIds.length; i++) {
-            const owner = await UserModel.findOne({_id: userIds[i]}, { password: 0 })
-            .catch(err => {throw new Error("Fatal error in finding user")});
-
-            if (owner) {
-                userIds.map(userId => userIds[i] === userId ? userIds[i] = owner.username : userId);
-            }
-        }
-
-        MESSAGES.forEach((message: any, index: number) => {
-            message.nickname = userIds[index];
-        });
 
         return { USER, ROOM, MESSAGES};
     } catch(err: any) {
