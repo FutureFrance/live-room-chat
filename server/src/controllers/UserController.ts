@@ -52,7 +52,7 @@ class UserController {
     static async getUser(req: Request, res: Response, next: NextFunction) {
         try {
             const userInfo = req.headers.user as string;
-            console.log("COOKIE", userInfo)
+
             const user = await userService.getUser(userInfo);
 
             return res.status(200).json({user});

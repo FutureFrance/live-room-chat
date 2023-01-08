@@ -10,3 +10,8 @@ export const create = [
     body("password", "Must be at least 6 characters").isLength({min: 6, max: 29}),
     body("repeat_password", "Must be at least 6 characters").isLength({min: 6, max: 29}),
 ];
+
+export const upload = [
+    body("room"),
+    body("room_image")
+]

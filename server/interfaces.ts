@@ -1,6 +1,7 @@
-import { LeanDocument, Types } from "mongoose"
+import { Types } from "mongoose"
 
 export interface IUser {
+    _id: string
     username: string,
     password: string
 }
@@ -10,10 +11,12 @@ export interface IRoom {
     name: string,
     owner: Types.ObjectId,
     password: string,
-    participants: Array<Types.ObjectId>
+    participants: Array<Types.ObjectId>,
+    image: string
 }
 
 export interface IMessage {
+    _id: Types.ObjectId,
     owner: Types.ObjectId,
     room: Types.ObjectId
 }
@@ -29,4 +32,9 @@ export interface IRegister {
 
 export interface DocumentResult<T> {
     _doc: T;
+}
+
+export interface ISendMessage {
+    messageContent: string,
+    roomName: string
 }

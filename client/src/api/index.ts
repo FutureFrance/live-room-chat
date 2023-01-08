@@ -1,5 +1,5 @@
 import { api } from '../http/index';
-import { IRoomResponse, ILoginResponse, IRegisterResponse, IUser } from '../interfaces';
+import { IRoomResponse, ILoginResponse, IRegisterResponse, IUser, IRoom } from '../interfaces';
 
 class ApiService {
     async auth() {
@@ -38,6 +38,20 @@ class ApiService {
             room_name, room_password }), {
             headers: {"Content-Type":"application/json"}
         });
+        return response;
+    }
+
+    async getRooms() {
+        return await api.get<Omit<IRoom[], 'password'>>("/rooms");
+    }
+
+    async uploadImage(file: File, room_name: string) {
+        const response = await api.post("/image/upload", {
+            room_image: file, 
+            room_name: room_name}, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
         return response;
     }
 }

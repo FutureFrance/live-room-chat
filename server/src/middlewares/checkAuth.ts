@@ -9,9 +9,9 @@ export const checkAuth = async(req: Request, res: Response, next: NextFunction) 
         const isValid = await tokenService.verify(token);
 
         req.headers.user = isValid.id || "no user invalid";
+
         next();
     } catch(err) {
-        console.log("ASFASDHGASDGHAGSDGGVGv")
         next(ApiError.Unauthorized());
     }
 }

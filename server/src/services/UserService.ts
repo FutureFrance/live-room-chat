@@ -26,7 +26,9 @@ class UserService {
 
         const accessToken = await tokenService.generate({id: String(user._id)});
 
-        return { user, token: accessToken}
+        const {password, ...returnUser} = user.toObject();
+
+        return { user: returnUser, token: accessToken }
     }
 
     async login(username: string, passwd: string): Promise<string> {
@@ -41,7 +43,7 @@ class UserService {
 
         const accessToken = await tokenService.generate({id: String(user._id)});
 
-        return accessToken
+        return accessToken;
     }
 
     async getUser(_id: string): Promise<Omit<IUser, 'password'>> {

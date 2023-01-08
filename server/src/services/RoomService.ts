@@ -12,8 +12,8 @@ dotenv.config();
 const SALT = process.env.SALT as string;
 
 class RoomService {
-    async create(room_name: string, room_password: string, room_repeated_password: string, user: string): Promise<Omit<IRoom, 'password'>> {
-        const isRoom = await RoomModel.findOne({name: room_name}, {password: 0})
+    async create(room_name: string, room_password: string, room_repeated_password: string, user: string): Promise<Omit<IRoom, 'password'|'image'>> {
+        const isRoom = await RoomModel.findOne({name: room_name}, {password: 0}, {image: 0})
         .catch(err => {throw ApiError.BadRequest(500, "Fatal error trying to find this room")});
 
         if (isRoom) throw ApiError.BadRequest(400, "This room is already registered");
@@ -34,14 +34,14 @@ class RoomService {
         return returnRoom;
     }
 
-    async join(room_name: string, room_password: string, userId: string): Promise<Omit<IRoom, 'password'>> {
-        const room = await RoomModel.findOne({name: room_name})
+    async join(room_name: string, room_password: string, userId: string): Promise<Omit<IRoom, 'password'|'image'>> {
+        const room = await RoomModel.findOne({name: room_name}, {image: 0})
         .catch(err => {throw ApiError.BadRequest(500, "Fatal error trying to search for this room")});
 
         if (!room) throw ApiError.BadRequest(400, "There is no such room");
 
         const {password, ...returnRoom} = room.toObject();
-
+        
         const user = await UserModel.findOne({_id: userId})
         .catch(err => {throw ApiError.BadRequest(500, "Fatal error could not find this user")});
 
@@ -58,6 +58,13 @@ class RoomService {
         await room.save();
 
         return returnRoom;
+    }
+
+    async getMemberOf(userId: string): Promise<Omit<IRoom[], 'password'|'participants'>> {
+        const rooms = await RoomModel.find({participants: userId}, {password: 0, participants: 0})
+        .catch(err => {throw ApiError.BadRequest(500, "Fatal error ocurred when trying to find rooms")});
+
+        return rooms;
     }
 }
 

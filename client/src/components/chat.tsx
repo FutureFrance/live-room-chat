@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useLocation }  from 'react-router-dom';
 import { IMessage, IMessageToClient } from '../interfaces';
 import Message from './message';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { socket } from '../socket';
+import Rooms from '../components/rooms';
 
 const Chat = () => {
     const [user, setUser] = useState<string>("");
@@ -10,82 +12,95 @@ const Chat = () => {
     const [messageContent, setMessageContent] = useState<string>("");
     const [messagesList, setMessagesList] = useState<IMessage[]>([{} as IMessage]);
     const [messagesLoading, setMessagesLoading] = useState<boolean>(true);
+    const navigate = useNavigate();
 
     async function sendMessage() {
-        console.log("sending message")
+        console.log(`User: ${user} is sending the message: ${messageContent}`);
         if (messageContent !== "") socket.emit("send_message", messageContent);    
     }
+    
+    useEffect(() => {
+        if (!socket.connected) {
+            console.log("socket is not connected, let s connect")
+            socket.connect();
+        }
+        socket.emit("get_info", window.location.pathname.slice(6, 30));
+    }, [navigate]);
 
     useEffect(() => {
         const ReceiveMessages = (data: any): void => {
-            console.log("Got data from a member group", data)
-            console.log(data.returnMessage)
-            data.returnMessage.owner = {username: ""}
-            data.returnMessage.owner.username = data.username; 
+            console.log(`Receiving messages from other users data:`, data)
+            data.returnMessage.owner = {username: data.username}
 
             setMessagesList(prev => [...prev, {...data.returnMessage}]);  
         };
 
         const SendMessageResponse = (data: IMessageToClient): void => {
-            console.log("received the message from backend");
-            console.log(data)
-            data.returnMessage.owner = {username: ""}
-            data.returnMessage.owner.username = data.username; 
+            data.returnMessage.owner = {username: data.username}
 
             setMessagesList(prev => [...prev, {...data.returnMessage}]); 
             setMessageContent("");
         };
 
         const WelcomeMessage = (data: any): void  => {
-            setMessagesList(data.messagesHistory); console.log("DATA", data);
+            setMessagesList(data.MESSAGES); 
             setUser(data.USER.username);
-            setRoom(data.ROOM.name); console.log("CONETION SET DATA: ", JSON.stringify(data));
+            setRoom(data.ROOM.name); 
+
             setMessagesLoading(false);
-                        
-            socket.emit("join_room");
         }
 
         socket.on("welcome", WelcomeMessage);
         socket.on("send_message_response", SendMessageResponse); 
         socket.on("receive_messages", ReceiveMessages);
 
+        socket.on("connect_error", () => navigate("/login", { replace: true }));
+
         return () => {
             socket.off("welcome", WelcomeMessage); 
             socket.off("send_message_response", SendMessageResponse);
             socket.off("receive_messages", ReceiveMessages);
+            socket.off("connect_error");
         }
     }, [socket]);
 
     return (
-        <>
-        <h3>{room}</h3>
-        <div className="chat-window">
-            <div className="chat-header">
-                <p>Live Chat</p>
-            </div>
-
-            <div className="chat-body">
-                <ScrollToBottom className="message-container">
-                    {!messagesLoading 
-                    ?   <>
-                            {messagesList.map((message) => {
-                                return <Message content={message.content} owner={message.owner.username} id={message._id} current_user={user} key={message._id}/>
-                            })}
-                        </>
-                    :   <p>Loading.....</p>
-                    }
-                </ScrollToBottom>
+        <section className="lobby">
+            <div className='rooms-layout'>
+                <Rooms></Rooms>
             </div>
             
-            <div className="chat-footer">
-                <input type="text" placeholder="Send mesage..." onChange={(e) => {setMessageContent(e.target.value)}}
-                onKeyPress={(e) => {e.key === "Enter" && sendMessage()}}
-                value={messageContent}
-                />
-                <button onClick={sendMessage}>&#9658;</button>
+            <div className="chat-window">
+                <div className="chat-header">
+                    <p>Room: {room}</p>
+                </div>
+
+                <div className="chat-body">
+                    <ScrollToBottom className="message-container">
+                    { !messagesLoading && messagesList.length === 0
+                        ? <p className="chat_info">No message yet in this room be you the first who does it</p>
+                        :   <>{!messagesLoading 
+                            ?   <>
+                                    {messagesList.map((message) => {
+                                        return <Message content={message.content} owner={message.owner.username} id={message._id} current_user={user} date={message.createdAt} key={message._id}/>
+                                    })}
+                                </>
+                            :   <p className="chat_info">Messages are Loading.....</p>
+                            }</>
+                    }
+                    </ScrollToBottom>
+                </div>
+                
+                <div className="chat-footer">
+                    <input className="message_input" type="text" placeholder="Send mesage..." onChange={(e) => {setMessageContent(e.target.value)}}
+                    onKeyPress={(e) => {e.key === "Enter" && sendMessage()}}
+                    value={messageContent}
+                    />
+                </div>
             </div>
-        </div>
-        </>
+
+            <div className="online_users"></div>
+        </section>
     )
 }
 

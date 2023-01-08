@@ -9,7 +9,8 @@ import cookieParser from 'cookie-parser';
 import { verifyUser } from './src/socket/socketMiddleware';
 import SocketService from './src/socket/socketService';
 import { errorHandler } from './src/middlewares/errorHandler';
-// do get all rooms and click on it to join the room if in
+import { IMessage, IRoom, IUser } from './interfaces';
+
 dotenv.config();
 
 const DB_URL = process.env.DB_URL as string;
@@ -17,6 +18,7 @@ const DB_URL = process.env.DB_URL as string;
 const app = express();
 const server = http.createServer(app);
 
+app.use('/images', express.static('static'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
@@ -45,13 +47,13 @@ const io = new Server(server, {
     },
 });
 
-io.use(async(socket, next) => {
-    console.log("USER is trying to connect to socket")
+io.use((socket, next) => {
     try {
-        const accessToken = socket.handshake.headers.cookie?.slice(6, socket.handshake.headers.cookie.length) as string;
-        const roomId =  socket.handshake.query.room as string;
+        const authorizationToken = socket.handshake.headers.cookie?.slice(6, socket.handshake.headers.cookie.length) as string;
 
-        socket.data = await verifyUser(accessToken, roomId);
+        if (authorizationToken === undefined) throw new Error("User is unauthorized");
+
+        socket.data = { authorizationToken };
         next();
     } catch(err: any) {
         next(err);
@@ -59,26 +61,41 @@ io.use(async(socket, next) => {
 });
 
 io.on("connection", (socket) => {
-    const USER = socket.data.USER;
-    const ROOM = socket.data.ROOM;
-    const messagesHistory = socket.data.MESSAGES;
+    const authorizationToken = socket.data.authorizationToken;
 
-    console.log(socket.data);
+    let USER: IUser;
+    let ROOM: IRoom;
+    let MESSAGES: IMessage[];
+    let CURRENT_ROOM: string = "empty";
 
-    socket.emit("welcome", ({ USER, ROOM, messagesHistory}));
+    socket.on("get_info", async(roomId: string) => {
+        if ( CURRENT_ROOM !== "empty") {
+            socket.leave(CURRENT_ROOM);
+            console.log(`Client left the room ${ROOM.name}`)
+        }
+        const information = await verifyUser(authorizationToken, roomId);
+        
+        USER = information.USER;
+        ROOM = information.ROOM;
+        MESSAGES = information.MESSAGES;
 
-    socket.on("join_room", () => {
-        console.log(`User: ${USER.username} joined the room: ${ROOM._id}`);
+        socket.emit("welcome", ({ USER, ROOM, MESSAGES }));
         socket.join(String(ROOM._id));
-    })
+
+        CURRENT_ROOM = String(ROOM._id);
+        console.log(`User: ${USER.username} joined the room ${ROOM.name}`);
+    });    
 
     socket.on("send_message", async(messageContent: string) => {
-        console.log(`Received message: ${messageContent} from ${USER.username} in room: ${ROOM._id} message: ${messageContent}`)
-        const message = await SocketService.createMessage(messageContent, USER._id, ROOM._id);
-        console.log(message)
+        console.log(`USER: ${USER.username} sent: ${messageContent} in room: ${ROOM.name}`)
+        const message = await SocketService.createMessage(messageContent, USER._id, String(ROOM._id));
+
         socket.emit("send_message_response", { returnMessage: message, username: USER.username});
-        console.log(`USER: ${USER.username} is sending a message to everyone in room:${ROOM._id}`)
         socket.broadcast.to(String(ROOM._id)).emit("receive_messages", { returnMessage: message, username: USER.username});
+    });
+
+    socket.on("disconnect", () => {
+        console.log("Client has disconnected");
     });
 });
 

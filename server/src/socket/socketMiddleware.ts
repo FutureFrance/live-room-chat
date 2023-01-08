@@ -32,7 +32,6 @@ export const verifyUser = async (token: string, room_id: string) => {
 
         return { USER, ROOM, MESSAGES};
     } catch(err: any) {
-        console.log("ERRRRR", err);
         throw new Error(err);
     }
 }

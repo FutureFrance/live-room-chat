@@ -2,8 +2,9 @@ import { Socket } from "socket.io-client"
 
 export interface IMessage {
     content: string,
-    owner: any, // IUser or string
-    _id: string
+    owner: IUser, 
+    _id: string,
+    createdAt: string
 }
 
 export interface IData {
@@ -12,7 +13,7 @@ export interface IData {
 }
 
 export interface IUser {
-    id: string,
+    id?: string,
     username: string
 }
 
@@ -29,7 +30,8 @@ export interface IRoom {
     _id: string,
     name: string,
     owner: string,
-    participants: Array<string>
+    participants: Array<string>,
+    image: string
 }
 
 export interface IRoomResponse {
