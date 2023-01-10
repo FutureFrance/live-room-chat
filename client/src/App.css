@@ -231,13 +231,14 @@ background: #2e7d32;
   position: relative;
   padding: 0;
   margin: 0;
+  width: 300px;
 }
 
 .room-profile {
   background-color: #212121;
   padding: 10px;
   cursor: pointer;
-  width: 300px;
+  width: 263px;
 }
 
 .room-profile:hover {

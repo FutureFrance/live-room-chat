@@ -1,4 +1,5 @@
-import { Types } from "mongoose"
+import { Types } from 'mongoose';
+import { Request } from 'express';
 
 export interface IUser {
     _id: string
@@ -37,4 +38,8 @@ export interface DocumentResult<T> {
 export interface ISendMessage {
     messageContent: string,
     roomName: string
+}
+
+export interface IRequest extends Request {
+    file?: any
 }

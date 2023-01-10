@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, response } from 'express';
 import { validationResult } from 'express-validator';
 import { ApiError } from '../errorHandlers/apiErrorHandler';
-import { IRoom } from '../../interfaces';
+import { IRoom, IRequest } from '../../interfaces';
 import { roomService } from '../services/RoomService';
 import { staticService } from '../services/staticService';
 
@@ -52,7 +52,7 @@ class RoomController {
         }
     }
 
-    static async uploadImage(req: Request, res: Response, next: NextFunction): Promise<Response<boolean> | undefined> {
+    static async uploadImage(req: IRequest, res: Response, next: NextFunction): Promise<Response<boolean> | undefined> {
         try {
             const errors = validationResult(req);
 

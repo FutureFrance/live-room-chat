@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation }  from 'react-router-dom';
+import { useNavigate }  from 'react-router-dom';
 import { IMessage, IMessageToClient } from '../interfaces';
 import Message from './message';
 import ScrollToBottom from 'react-scroll-to-bottom';
@@ -20,10 +20,8 @@ const Chat = () => {
     }
     
     useEffect(() => {
-        if (!socket.connected) {
-            console.log("socket is not connected, let s connect")
-            socket.connect();
-        }
+        if (!socket.connected) socket.connect();
+
         socket.emit("get_info", window.location.pathname.slice(6, 30));
     }, [navigate]);
 
@@ -79,14 +77,16 @@ const Chat = () => {
                     <ScrollToBottom className="message-container">
                     { !messagesLoading && messagesList.length === 0
                         ? <p className="chat_info">No message yet in this room be you the first who does it</p>
-                        :   <>{!messagesLoading 
-                            ?   <>
-                                    {messagesList.map((message) => {
-                                        return <Message content={message.content} owner={message.owner.username} id={message._id} current_user={user} date={message.createdAt} key={message._id}/>
-                                    })}
-                                </>
-                            :   <p className="chat_info">Messages are Loading.....</p>
-                            }</>
+                        :   <>
+                                {!messagesLoading 
+                                ?   <>
+                                        {messagesList.map((message) => {
+                                            return <Message content={message.content} owner={message.owner.username} id={message._id} current_user={user} date={message.createdAt} key={message._id}/>
+                                        })}
+                                    </>
+                                :   <p className="chat_info">Messages are Loading.....</p>
+                                }
+                            </>
                     }
                     </ScrollToBottom>
                 </div>
