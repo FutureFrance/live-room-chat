@@ -8,33 +8,44 @@ export function chat(io: any): void {
         const authorizationToken = socket.data.authorizationToken;
 
         let USER: IUser;
-        let ROOM: IRoom;
+        let ROOM: IRoom = {} as IRoom;
         let MESSAGES: IMessage[];
-        let CURRENT_ROOM: string = "empty";
 
-        socket.on("get_info", async(roomId: string) => {
-            if ( CURRENT_ROOM !== "empty") socket.leave(CURRENT_ROOM);
+        const getInfo = async(roomId: string) => {
+            if ( '_id' in ROOM ) socket.leave(String(ROOM._id));
             
             const information = await verifyUser(authorizationToken, roomId);
             
-            USER = information.USER;
-            ROOM = information.ROOM;
-            MESSAGES = information.MESSAGES;
+            if (information.errorMessage !== "none") {
+                return socket.emit("on_error", information.errorMessage);
+            };
+            
+            [USER, ROOM, MESSAGES] = [information.USER, information.ROOM, information.MESSAGES];
 
             socket.emit("welcome", ({ USER, ROOM, MESSAGES }));
             socket.join(String(ROOM._id));
+        }
 
-            CURRENT_ROOM = String(ROOM._id);
-        });    
-
-        socket.on("send_message", async(messageContent: string) => {
+        const sendMessage = async(messageContent: string) => {
             const message = await SocketService.createMessage(messageContent, USER._id, String(ROOM._id));
 
-            socket.emit("send_message_response", { returnMessage: message, username: USER.username});
-            socket.broadcast.to(String(ROOM._id)).emit("receive_messages", { returnMessage: message, username: USER.username});
-        });
+            if (message === 'DBUnable to create the message') {
+                return socket.emit("on_error", message);
+            }
 
-        socket.on("disconnect", () => {
+            socket.emit("send_message_response", { 
+                returnMessage: message, 
+                username: USER.username
+            });
+            socket.broadcast.to(String(ROOM._id)).emit("receive_messages", { 
+                returnMessage: message, username: USER.username
+            });
+        }
+        
+        socket.on("get_info", getInfo);    
+        socket.on("send_message", sendMessage);
+
+        socket.on("disconnect", (): void => {
             console.log("Client has disconnected");
         });
     });

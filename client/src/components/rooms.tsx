@@ -26,7 +26,7 @@ const Rooms = () => {
     }, []);
 
     return (
-        <>
+        <div className="left_loby_section">
             <div className="chat-header">
                 <p>Member in:</p>
             </div>
@@ -45,7 +45,7 @@ const Rooms = () => {
                 <Link to="/room/join"><button className='action-button'>Join a room</button></Link><br/><br/>
                 <Link to="/room/create"><button className='action-button'>Create a new room</button></Link>
             </div>
-        </>
+        </div>
     )
 }
 

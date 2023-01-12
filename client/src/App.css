@@ -1,11 +1,8 @@
-.App {
-  width: 100vw;
-  height: 100vh;
+body {
   background: #36393f;
   color: #fff;
   font-family: "Open Sans", sans-serif;
   display: grid;
-  place-items: center;
 }
 
 a {
@@ -17,7 +14,6 @@ body {
   margin: 0%;
   padding: 0%;
 }
-@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,800");
 
 .formContainer {
   display: flex;
@@ -238,7 +234,6 @@ background: #2e7d32;
   background-color: #212121;
   padding: 10px;
   cursor: pointer;
-  width: 263px;
 }
 
 .room-profile:hover {
@@ -279,9 +274,8 @@ background: #2e7d32;
 }
 
 .lobby {
-  width: 1400px;
-  margin: 0 auto;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
   gap: 1rem;
 }
 
@@ -335,4 +329,14 @@ background: #2e7d32;
 .chat_info {
   text-align: center;
   padding-top: 20px;
+}
+
+@media (max-width: 800px) {
+  .lobby {
+    grid-template-columns: repeat(1, 2fr);
+  }
+
+  .rooms-profile {
+    width: 100%;
+  }
 }

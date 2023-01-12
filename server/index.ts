@@ -50,7 +50,9 @@ io.use((socket, next) => {
     try {
         const authorizationToken = socket.handshake.headers.cookie?.slice(6, socket.handshake.headers.cookie.length) as string;
 
-        if (authorizationToken === undefined) throw new Error("User is unauthorized");
+        if (authorizationToken === undefined) {
+            return socket.emit("on_error", "User is not authorized");
+        }
 
         socket.data = { authorizationToken };
         next();

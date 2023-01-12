@@ -12,6 +12,7 @@ const Chat = () => {
     const [messageContent, setMessageContent] = useState<string>("");
     const [messagesList, setMessagesList] = useState<IMessage[]>([{} as IMessage]);
     const [messagesLoading, setMessagesLoading] = useState<boolean>(true);
+    const [socketError, setSocketError] = useState<string>("");
     const navigate = useNavigate();
 
     async function sendMessage() {
@@ -48,9 +49,15 @@ const Chat = () => {
             setMessagesLoading(false);
         }
 
+        const HandleError = (data: any) => {
+            navigate("/lobby", { replace: true })
+            setSocketError(data.errorMessage);
+        }
+
         socket.on("welcome", WelcomeMessage);
         socket.on("send_message_response", SendMessageResponse); 
         socket.on("receive_messages", ReceiveMessages);
+        socket.on("on_error", HandleError);
 
         socket.on("connect_error", () => navigate("/login", { replace: true }));
 
@@ -58,6 +65,7 @@ const Chat = () => {
             socket.off("welcome", WelcomeMessage); 
             socket.off("send_message_response", SendMessageResponse);
             socket.off("receive_messages", ReceiveMessages);
+            socket.off("on_error", HandleError);
             socket.off("connect_error");
         }
     }, [socket]);
@@ -81,7 +89,13 @@ const Chat = () => {
                                 {!messagesLoading 
                                 ?   <>
                                         {messagesList.map((message) => {
-                                            return <Message content={message.content} owner={message.owner.username} id={message._id} current_user={user} date={message.createdAt} key={message._id}/>
+                                            return <Message 
+                                                        content={message.content} 
+                                                        owner={message.owner.username} 
+                                                        id={message._id} current_user={user} 
+                                                        date={message.createdAt} 
+                                                        key={message._id}
+                                                    />
                                         })}
                                     </>
                                 :   <p className="chat_info">Messages are Loading.....</p>
@@ -92,12 +106,15 @@ const Chat = () => {
                 </div>
                 
                 <div className="chat-footer">
-                    <input className="message_input" type="text" placeholder="Send mesage..." onChange={(e) => {setMessageContent(e.target.value)}}
-                    onKeyPress={(e) => {e.key === "Enter" && sendMessage()}}
-                    value={messageContent}
+                    <input className="message_input" type="text" placeholder="Send mesage..." 
+                        onChange={(e) => {setMessageContent(e.target.value)}}
+                        onKeyPress={(e) => {e.key === "Enter" && sendMessage()}}
+                        value={messageContent}
                     />
                 </div>
             </div>
+            
+            { socketError !== "" ? <p className="err">{socketError}</p> : ""}
 
             <div className="online_users"></div>
         </section>

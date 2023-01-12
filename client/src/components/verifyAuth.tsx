@@ -10,7 +10,7 @@ const RequireAuth = ({children}: any) => {
             await apiService.auth();
 
             setIsAuth(true);
-        } catch(err) {
+        } catch(err: any) {
             console.log("Unauthorized");
         }
     }

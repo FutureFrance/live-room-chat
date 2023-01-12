@@ -8,7 +8,7 @@ export interface IUser {
 }
 
 export interface IRoom {
-    _id: Types.ObjectId,
+    _id: Types.ObjectId | string,
     name: string,
     owner: Types.ObjectId,
     password: string,
@@ -42,4 +42,11 @@ export interface ISendMessage {
 
 export interface IRequest extends Request {
     file?: any
+}
+
+export interface IVerify {
+    USER: IUser, 
+    ROOM: IRoom, 
+    MESSAGES: IMessage[], 
+    errorMessage: string
 }
