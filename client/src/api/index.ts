@@ -54,6 +54,10 @@ class ApiService {
 
         return response;
     }
+
+    async getFilteredMessage(query: string, roomId: string) {
+        return await api.get(`/messages?query=${query}&room=${roomId}`);
+    }
 }
 
 export const apiService = new ApiService();

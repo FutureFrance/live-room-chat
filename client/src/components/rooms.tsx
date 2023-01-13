@@ -27,7 +27,7 @@ const Rooms = () => {
 
     return (
         <div className="left_loby_section">
-            <div className="chat-header">
+            <div className="chat_header">
                 <p>Member in:</p>
             </div>
             <div className="rooms-profile">

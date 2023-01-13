@@ -5,11 +5,11 @@ import { ApiError } from '../errorHandlers/apiErrorHandler';
 
 const storage = multer.diskStorage({
     destination: function (req: Request, file, callback) {
-        callback(new ApiError(500, "Unable to upload the file"), './static');
+        callback(null, './static');
     },
     filename: function (req: Request, file, callback) {
         const fileName = Date.now() + file.originalname.split('.')[0] + path.extname(file.originalname).split('.')[0].replace('\\', '') + '.jpg';
-        callback(new ApiError(500, "Unable to parse the filename"), fileName);
+        callback(null, fileName);
     }
 });
 

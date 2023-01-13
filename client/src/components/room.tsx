@@ -1,13 +1,15 @@
-import { Link } from "react-router-dom";
 import { IRoom } from "../interfaces";
+import { useNavigate } from 'react-router-dom';
 
 interface IProp {
     room: IRoom,
 }
 
 const Room = ({room}: IProp) => {
+    const navigate = useNavigate();
+
     return (
-        <Link to={`/chat/${room._id}`} className="room_name">
+        <div onClick={() => navigate(`/chat/${room._id}`, { replace: true})} className="room_name">
             <div className="room-profile" tabIndex={0}>      
                 <div className="room-profile-content" tabIndex={0}> 
                     {room.image 
@@ -17,7 +19,7 @@ const Room = ({room}: IProp) => {
                     <p>{room.name}</p>
                 </div>
             </div>
-        </Link>
+        </div>
     )
 }
 

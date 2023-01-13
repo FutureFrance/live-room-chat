@@ -16,9 +16,7 @@ export function chat(io: any): void {
             
             const information = await verifyUser(authorizationToken, roomId);
             
-            if (information.errorMessage !== "none") {
-                return socket.emit("on_error", information.errorMessage);
-            };
+            if (information.errorMessage !== "none") return socket.emit("on_error", information.errorMessage);
             
             [USER, ROOM, MESSAGES] = [information.USER, information.ROOM, information.MESSAGES];
 
@@ -29,9 +27,7 @@ export function chat(io: any): void {
         const sendMessage = async(messageContent: string) => {
             const message = await SocketService.createMessage(messageContent, USER._id, String(ROOM._id));
 
-            if (message === 'DBUnable to create the message') {
-                return socket.emit("on_error", message);
-            }
+            if (message === 'DBUnable to create the message') return socket.emit("on_error", message);
 
             socket.emit("send_message_response", { 
                 returnMessage: message, 

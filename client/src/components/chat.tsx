@@ -5,6 +5,7 @@ import Message from './message';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { socket } from '../socket';
 import Rooms from '../components/rooms';
+import SearchBar from './searchBar';
 
 const Chat = () => {
     const [user, setUser] = useState<string>("");
@@ -77,8 +78,10 @@ const Chat = () => {
             </div>
             
             <div className="chat-window">
-                <div className="chat-header">
+                <div className="chat_header">
                     <p>Room: {room}</p>
+
+                    <SearchBar />
                 </div>
 
                 <div className="chat-body">

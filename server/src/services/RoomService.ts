@@ -3,9 +3,10 @@ import dotenv from 'dotenv';
 import { ObjectId } from 'mongodb';
 import { Types } from 'mongoose';
 import { ApiError } from "../errorHandlers/apiErrorHandler";
-import { IRoom } from '../../interfaces';
+import { IMessage, IRoom } from '../../interfaces';
 import RoomModel from "../models/RoomModel";
 import UserModel from '../models/UserModel';
+import MessageModel from '../models/MessageModel';
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ class RoomService {
         if (isRoom) throw ApiError.BadRequest(400, "This room is already registered");
 
         if (room_password !== room_repeated_password) throw ApiError.BadRequest(400, "Passwords do not match");
-        console.log(room_password)
+
         const passwordHash = await bcrypt.hash(room_password, parseInt(SALT));
 
         const room = await RoomModel.create({
@@ -65,6 +66,23 @@ class RoomService {
         .catch(err => {throw ApiError.BadRequest(500, "Fatal error ocurred when trying to find rooms")});
 
         return rooms;
+    }
+
+    async getFilteredMessages(query: string, roomId: string, userId: string): Promise<IMessage[]> {
+        const inRoom = await RoomModel.findOne({
+            _id: roomId,
+            participants: new ObjectId(userId)
+        }).catch(err => { throw ApiError.BadRequest(500, "Fatal error occured while trying to find this room")});
+
+        if (!inRoom) throw ApiError.BadRequest(400, "User is not a member of this room");
+  
+        const filteredMessages = await MessageModel.find({
+            room: new ObjectId(roomId),
+            content: { $regex: `.*${query}.*`, $options: 'i'}
+        }).populate('owner', {password: 0, _id: 0})
+        .catch(err => { throw ApiError.BadRequest(500, `Fatal error trying to fetch the messages ${err}`)});
+
+        return filteredMessages;
     }
 }
 

@@ -16,6 +16,9 @@ router.post("/room/create", checkAuth, RoomValidate.create, RoomController.creat
 router.post("/room/join", checkAuth, RoomValidate.join, RoomController.join);
 router.get("/rooms", checkAuth, RoomController.getMemberOf);
 
+router.get("/messages", checkAuth, RoomController.getFilteredMessages);
+
 router.post("/image/upload", checkAuth, RoomValidate.upload, verifyUploadFile, RoomController.uploadImage);
+
 
 export default router;

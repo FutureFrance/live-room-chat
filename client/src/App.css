@@ -65,18 +65,19 @@ background: #2e7d32;
   padding: 2.2px;
 }
 
-.chat-header {
+.chat_header {
   height: 45px;
   border-radius: 6px;
   background: #4a545a;
-  position: relative;
-  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.chat-header p {
+.chat_header p {
   margin: 0;
   display: block;
-  padding: 0 1em 0 2em;
+  padding: 0 1em 0 1em;
   color: #fff;
   font-weight: 800;
   line-height: 45px;
@@ -86,7 +87,6 @@ background: #2e7d32;
   height: calc(608px - (45px + 70px));
   border: 1px solid #263238;
   background: #36393f;
-
   position: relative;
 }
 .chat-window .chat-body .message-container {
@@ -173,7 +173,6 @@ background: #2e7d32;
   padding: 0 0.7em;
   font-size: 1em;
   border-right: 1px dotted #607d8b;
-
   outline: none;
   font-family: "Open Sans", sans-serif;
 }
@@ -274,6 +273,7 @@ background: #2e7d32;
 }
 
 .lobby {
+  margin: 25px 25px 0px 25px;
   display: grid;
   grid-template-columns: 1fr 4fr;
   gap: 1rem;
@@ -334,9 +334,78 @@ background: #2e7d32;
 @media (max-width: 800px) {
   .lobby {
     grid-template-columns: repeat(1, 2fr);
+    margin: 0px;
   }
 
   .rooms-profile {
     width: 100%;
   }
+}
+
+.search_bar {
+  margin-right: 1em;
+}
+
+.search_inputs {
+  display: flex;
+}
+
+.search_inputs input {
+  background-color: #202225;
+  outline: 0;
+  border: 0;
+}
+
+.search_bar input{
+  padding: 3px;
+  color: rgb(206, 204, 204);
+}
+
+.search_icon, .delete_icon {
+  background-color: #202225;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.icon_search, .icon_delete {
+  height: 20%;
+  color: rgb(192, 192, 192);
+}
+
+.filtered_result {
+  margin-top: 10px;
+  width: 170px;
+  height: 200px;
+  overflow: hidden;
+  overflow-y: auto;
+  background: #222;
+  position: absolute;
+  z-index: 1;
+  border-radius: 5px;
+}
+
+.searched_message:hover {
+  background-color: #7f828529;
+  transition: all 0.5s ease-out;
+  cursor: pointer;
+}
+
+.searched_message_container {
+  border-bottom: 1px rgba(245, 245, 245, 0.107) solid;
+}
+
+.filtered_result p {
+  font-size: 12.5px;
+  font-weight: 550;
+  line-height: 21px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  overflow-wrap: break-word;
+}
+
+.filtered_result span {
+  font-weight: 700;
+  font-size: 15px;
+  color: #7f75c1a9;
 }

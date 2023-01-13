@@ -9,7 +9,7 @@ class UserController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw ApiError.BadRequest(400, "Invalid request body data", errors.array());
+            if (!errors.isEmpty()) throw ApiError.BadRequest(400, "Incorrect information", errors.array());
 
             const { username, password, repeat_password } = req.body;
 
@@ -22,7 +22,7 @@ class UserController {
             });
 
             return res.status(200).json({user: DB.user});
-        } catch(err) {
+        } catch(err: unknown) {
             next(err);
         }
     }
@@ -31,7 +31,7 @@ class UserController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw ApiError.BadRequest(400, "Invalid request body data", errors.array());
+            if (!errors.isEmpty()) throw ApiError.BadRequest(400, "Incorrect information", errors.array());
 
             const { username, password } = req.body;
 
@@ -44,7 +44,7 @@ class UserController {
             });
 
             return res.status(200).json({token});
-        } catch(err) {
+        } catch(err: unknown) {
             next(err);
         }
     }
@@ -56,7 +56,7 @@ class UserController {
             const user = await userService.getUser(userInfo);
 
             return res.status(200).json({user});
-        } catch(err) {
+        } catch(err: unknown) {
             next(err);
         }
     }
