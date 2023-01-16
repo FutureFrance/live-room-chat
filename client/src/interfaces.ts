@@ -13,8 +13,10 @@ export interface IData {
 }
 
 export interface IUser {
-    id?: string,
-    username: string
+    _id?: string,
+    image?: string,
+    username: string,
+    online?: boolean
 }
 
 export interface IRegisterResponse {
@@ -30,7 +32,7 @@ export interface IRoom {
     _id: string,
     name: string,
     owner: string,
-    participants: Array<string>,
+    participants: IUser[],
     image: string
 }
 
@@ -45,4 +47,16 @@ export interface ISocketProp {
 export interface IMessageToClient {
     returnMessage: IMessage,
     username: string
+}
+
+export interface IVerify {
+    USER: IUser, 
+    ROOM: IRoom, 
+    MESSAGES: IMessage[], 
+    errorMessage?: string
+}
+
+export interface IMembers {
+    connectedClients: string[],
+    roomMembers: IUser[]
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useDebounce from '../hooks';
 import SearchIcon from '@mui/icons-material/Search';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -9,13 +9,14 @@ const SearchBar = () => {
     const [data, setData] = useState<Array<IMessage>>([]);
     const [query, setQuery] = useState<string>("");
     const [showSearchBox, setShowSearchBox] = useState<boolean>(false);
+    const [searchBoxFocus, setSearchBoxFocus] = useState<boolean>(false);
     const debouncedSearchTerm = useDebounce<string>(query, 200);
 
     async function getFilteredMessages() {
         if (query.length < 1) return setData([]);
         try {
             const response = await apiService.getFilteredMessage(query, window.location.pathname.slice(6, 30));
-            console.log(data)
+
             setData(response.data.messages);
         } catch(err) {
             console.log(err);
@@ -27,9 +28,13 @@ const SearchBar = () => {
     }
 
     async function outOfFocus() {
-        await delay(200);
-        setData([]);
-        setShowSearchBox(false);
+        if (!searchBoxFocus) {
+            await delay(200);
+            setData([]); 
+            setShowSearchBox(false);
+        }
+
+        setSearchBoxFocus(false)
     }
 
     async function findMessage(messagesId: string) {
@@ -54,7 +59,7 @@ const SearchBar = () => {
                 }
             </div>
 
-            {showSearchBox && <div className="filtered_result">
+            {showSearchBox && <div className="filtered_result" onClick={(e) => { setSearchBoxFocus(true) }}>
                 {data.length > 0
                 ?   <>
                         {data.map((message) => {

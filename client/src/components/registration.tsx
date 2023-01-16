@@ -8,12 +8,15 @@ const Registration = () => {
     const [password, setPassword] = useState<string>("");
     const [repeatedPassword, setRepeatedPassword] = useState<string>("");
     const [apiError, setApiError] = useState<string>("");
+    const [file, setFile] = useState<File>();
     const navigate = useNavigate();
 
     async function registerRequest(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
         try {
-            e.preventDefault();
             await apiService.register(username, password, repeatedPassword);
+
+            if(file) await apiService.uploadProfileImage(file);
 
             navigate("/lobby", { replace: true });
         } catch(err: any) {
@@ -28,6 +31,7 @@ const Registration = () => {
             <input type="text" placeholder="john..." onChange={(e) => {setUsername(e.target.value)}}/><br/><br/>
             <input type="password" placeholder="password" onChange={(e) => {setPassword(e.target.value)}}/><br/><br/>
             <input type="password" placeholder="repeat password" onChange={(e) => {setRepeatedPassword(e.target.value)}}/><br/><br/>
+            <input type="file" accept='.png,.jpg,.jpeg' onChange={(e) => {setFile(e.target.files?.[0])}}/>
             <button type="submit">Register</button>
 
             { apiError && <p className='err'>{apiError}</p>}

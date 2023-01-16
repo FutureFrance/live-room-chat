@@ -45,11 +45,20 @@ class ApiService {
         return await api.get<Omit<IRoom[], 'password'>>("/rooms");
     }
 
-    async uploadImage(file: File, room_name: string) {
-        const response = await api.post("/image/upload", {
-            room_image: file, 
+    async uploadRoomImage(file: File, room_name: string) {
+        const response = await api.post("/room/image/upload", {
+            image: file, 
             room_name: room_name}, {
             headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
+        return response;
+    }
+
+    async uploadProfileImage(file: File) {
+        const response = await api.post("/profile/image/upload", {
+            image: file}, {
+            headers: {'Content-Type': 'multipart/form-data'}
         });
 
         return response;

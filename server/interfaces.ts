@@ -2,9 +2,11 @@ import { Types } from 'mongoose';
 import { Request } from 'express';
 
 export interface IUser {
-    _id: string
+    _id: string,
+    image: string, 
     username: string,
-    password: string
+    password: string,
+    online?: boolean
 }
 
 export interface IRoom {
@@ -46,7 +48,20 @@ export interface IRequest extends Request {
 
 export interface IVerify {
     USER: IUser, 
-    ROOM: IRoom, 
+    ROOM: IRoomSocket, 
     MESSAGES: IMessage[], 
-    errorMessage: string
+    errorMessage: string,
+}
+
+export interface IGetInfo {
+    roomId: string,
+    needOnlineMembers: boolean
+}
+
+export interface IRoomSocket extends Omit<IRoom, 'participants'>{
+    participants: Array<Omit<IUser, 'password'>>
+}
+
+export interface IPopulateParticipants {
+    participants: Array<Omit<IUser, 'password'>>
 }

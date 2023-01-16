@@ -28,5 +28,5 @@ export const verifyUploadFile = multer({
     limits: {
         fileSize: 5 * 1024 * 1024
     }
-}).single("room_image");
+}).single("image");
 

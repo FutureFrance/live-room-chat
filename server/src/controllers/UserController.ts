@@ -3,6 +3,7 @@ import { validationResult } from 'express-validator';
 import { ApiError } from '../errorHandlers/apiErrorHandler';
 import { IUser } from '../../interfaces';
 import { userService } from '../services/UserService';
+import { staticService } from '../services/staticService';
 
 class UserController {
     static async register(req: Request, res: Response, next: NextFunction): Promise<Response<Omit<IUser, 'password'>> | undefined> {
@@ -27,7 +28,7 @@ class UserController {
         }
     }
 
-    static async login(req: Request, res: Response, next: NextFunction): Promise<Response<string> | undefined> {
+    static async login(req: Request, res: Response, next: NextFunction): Promise<Response<null> | undefined> {
         try {
             const errors = validationResult(req);
 
@@ -43,7 +44,7 @@ class UserController {
                 sameSite: "lax"
             });
 
-            return res.status(200).json({token});
+            return res.status(200).json({});
         } catch(err: unknown) {
             next(err);
         }
@@ -57,6 +58,27 @@ class UserController {
 
             return res.status(200).json({user});
         } catch(err: unknown) {
+            next(err);
+        }
+    }
+
+    static async uploadImage(req: Request, res: Response, next: NextFunction) {
+        try {
+            const errors = validationResult(req);
+
+            if (!errors.isEmpty()) throw ApiError.BadRequest(400, "Invalid information", errors.array());
+
+            const userId = req.headers.user as string;
+            const imagePath = req.file?.filename as string;
+
+            await staticService.uploadProfileImage(userId, imagePath);
+
+            return res.status(200).json({success: true});
+        } catch(err: unknown) {
+            const imagePath = req.file?.filename as string;
+
+            if (imagePath !== "") await staticService.removeImage(imagePath);
+
             next(err);
         }
     }

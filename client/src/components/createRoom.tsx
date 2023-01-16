@@ -15,7 +15,7 @@ const CreateRoom = () => {
         try {
             const response = await apiService.createRoom(roomName, password, reapeatedPassword);
 
-            if(file) await apiService.uploadImage(file, roomName);
+            if(file) await apiService.uploadRoomImage(file, roomName);
             
             navigate(`/chat/${response.data.room._id}`, {replace: true});
         } catch(err: any) {

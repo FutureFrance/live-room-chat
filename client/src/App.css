@@ -208,7 +208,7 @@ background: #2e7d32;
 }
 
 .rooms-layout {
-  height: 650px;
+  height: 110%;
 }
 
 .rooms-profile .rooms-container {
@@ -222,11 +222,11 @@ background: #2e7d32;
 }
 
 .rooms-profile{
-  height: calc(650px - (45px + 70px));
+  height: 100%;
   position: relative;
   padding: 0;
   margin: 0;
-  width: 300px;
+  width: 100%;
 }
 
 .room-profile {
@@ -273,6 +273,13 @@ background: #2e7d32;
 }
 
 .lobby {
+  margin: 25px 25px 0px 25px;
+  display: grid;
+  grid-template-columns: 1.4fr 4fr 0.9fr;
+  gap: 1rem;
+}
+
+.lobby_members_off {
   margin: 25px 25px 0px 25px;
   display: grid;
   grid-template-columns: 1fr 4fr;
@@ -342,6 +349,12 @@ background: #2e7d32;
   }
 }
 
+@media (max-width: 900px) {
+  p {
+    font-size: 13px;
+  }
+}
+
 .search_bar {
   margin-right: 1em;
 }
@@ -374,7 +387,8 @@ background: #2e7d32;
 }
 
 .filtered_result {
-  margin-top: 10px;
+  margin-right: 10px;
+  margin-top: 11px;
   width: 170px;
   height: 200px;
   overflow: hidden;
@@ -385,9 +399,9 @@ background: #2e7d32;
   border-radius: 5px;
 }
 
-.searched_message:hover {
+.searched_message_container:hover {
   background-color: #7f828529;
-  transition: all 0.5s ease-out;
+  transition: all 0.33s ease-in-out;
   cursor: pointer;
 }
 
@@ -408,4 +422,80 @@ background: #2e7d32;
   font-weight: 700;
   font-size: 15px;
   color: #7f75c1a9;
+}
+
+.online_users{
+  width: 100%;
+  height: 580px;
+  background: #222;
+  border-radius: 5px;
+  
+}
+
+.users_container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 585px;
+  padding: 7px;
+  padding-bottom: 5px;
+  padding-top: 5px;
+}
+
+.users_container:hover {
+  background-color: #7f828529;
+  transition: all 0.33s ease-in-out;
+  cursor: pointer;
+}
+
+.online_users_container {
+  height: 535px;
+}
+
+.online_users_container .members_container{
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+.online_users_container .members_container::-webkit-scrollbar {
+  display: none;
+}
+
+.online {
+  border-radius: 22px;
+  width: 10px;
+  height: 10px;
+  background-color: #18a11f;
+}
+
+.offline {
+  border-radius: 22px;
+  width: 10px;
+  height: 10px;
+  background-color: rgb(189, 3, 3);
+}
+
+.room_header_actions {
+  display: flex;
+}
+
+.members_icon {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.room_member_info {
+  display: flex;
+  align-items: center;
+}
+
+.room_member_info img{
+  margin-right: 9px;
+}
+
+.room_member_image {
+  width: 29px;
+  height: 29px;
+  border-radius: 10px;
 }

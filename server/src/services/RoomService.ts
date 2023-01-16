@@ -78,7 +78,7 @@ class RoomService {
   
         const filteredMessages = await MessageModel.find({
             room: new ObjectId(roomId),
-            content: { $regex: `.*${query}.*`, $options: 'i'}
+            content: { $regex: `.*${query}.*`, $options: 'i'} // should do some character escaping like ?
         }).populate('owner', {password: 0, _id: 0})
         .catch(err => { throw ApiError.BadRequest(500, `Fatal error trying to fetch the messages ${err}`)});
 

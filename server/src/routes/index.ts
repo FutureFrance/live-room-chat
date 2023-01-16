@@ -18,7 +18,7 @@ router.get("/rooms", checkAuth, RoomController.getMemberOf);
 
 router.get("/messages", checkAuth, RoomController.getFilteredMessages);
 
-router.post("/image/upload", checkAuth, RoomValidate.upload, verifyUploadFile, RoomController.uploadImage);
-
+router.post("/room/image/upload", checkAuth, RoomValidate.upload, verifyUploadFile, RoomController.uploadImage);
+router.post("/profile/image/upload", checkAuth, UserValidate.upload, verifyUploadFile, UserController.uploadImage);
 
 export default router;

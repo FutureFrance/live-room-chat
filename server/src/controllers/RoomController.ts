@@ -64,7 +64,7 @@ class RoomController {
 
             const imagePath = req.file?.filename as string;
 
-            await staticService.uploadImage(imagePath, room_name, userId);
+            await staticService.uploadRoomImage(imagePath, room_name, userId);
 
             return res.status(200).json({success: true});
         } catch(err: unknown) { // think if you need to check whether the owner is trying to delete or any user 
