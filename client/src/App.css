@@ -51,6 +51,10 @@ body {
   margin: auto;
 }
 
+.left_loby_section {
+  height: 612px;
+}
+
 .formContainer button:hover {
 background: #2e7d32;
 }
@@ -84,7 +88,7 @@ background: #2e7d32;
 }
 
 .chat-window .chat-body {
-  height: calc(608px - (45px + 70px));
+  height: 570px;
   border: 1px solid #263238;
   background: #36393f;
   position: relative;
@@ -102,6 +106,7 @@ background: #2e7d32;
   height: auto;
   padding: 10px;
   display: flex;
+  align-items: center;
 }
 
 .chat-window .chat-body .message .message-content {
@@ -122,6 +127,12 @@ background: #2e7d32;
   word-break: break-word;
 }
 
+.message_owner_image {
+  width: 30px;
+  height: 30px;
+  border-radius: 100px;
+}
+
 .you {
   justify-content: flex-start;
 }
@@ -137,6 +148,7 @@ background: #2e7d32;
 
 .other {
   justify-content: flex-end;
+  order: 2;
 }
 
 .other .message-content {
@@ -207,10 +219,6 @@ background: #2e7d32;
   opacity: 0 !important;
 }
 
-.rooms-layout {
-  height: 110%;
-}
-
 .rooms-profile .rooms-container {
   width: 100%;
   height: 100%;
@@ -227,6 +235,8 @@ background: #2e7d32;
   padding: 0;
   margin: 0;
   width: 100%;
+  background-color: #212121;
+  border-radius: 5px;
 }
 
 .room-profile {
@@ -253,7 +263,11 @@ background: #2e7d32;
 .room-profile img {
   width: 50px;
   height: 50px;
-  border-radius: 20px;
+  border-radius: 100px;
+}
+
+.room-profile img:hover {
+  border-radius: 13px;
 }
 
 .room-profile-content {
@@ -275,7 +289,7 @@ background: #2e7d32;
 .lobby {
   margin: 25px 25px 0px 25px;
   display: grid;
-  grid-template-columns: 1.4fr 4fr 0.9fr;
+  grid-template-columns: 1.4fr 5fr 0.9fr;
   gap: 1rem;
 }
 
@@ -295,9 +309,14 @@ background: #2e7d32;
   cursor: pointer;
 }
 
+.success {
+  color: green;
+  opacity: 0.8;
+}
+
 .err {
   color: red;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .drop-container {
@@ -351,7 +370,7 @@ background: #2e7d32;
 
 @media (max-width: 900px) {
   p {
-    font-size: 13px;
+    font-size: 11px;
   }
 }
 
@@ -426,13 +445,13 @@ background: #2e7d32;
 
 .online_users{
   width: 100%;
-  height: 580px;
+  height: 657px;
   background: #222;
   border-radius: 5px;
   
 }
 
-.users_container {
+.user_container {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -440,12 +459,22 @@ background: #2e7d32;
   padding: 7px;
   padding-bottom: 5px;
   padding-top: 5px;
+  position: relative;
 }
 
-.users_container:hover {
+.user_container:hover {
   background-color: #7f828529;
   transition: all 0.33s ease-in-out;
   cursor: pointer;
+}
+
+.user_container p {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.user_offline {
+  opacity: 0.33;
 }
 
 .online_users_container {
@@ -467,6 +496,10 @@ background: #2e7d32;
   width: 10px;
   height: 10px;
   background-color: #18a11f;
+  position: absolute;
+  top: 30px;
+  left: 31px;
+  border: 2px #222 solid;
 }
 
 .offline {
@@ -474,6 +507,10 @@ background: #2e7d32;
   width: 10px;
   height: 10px;
   background-color: rgb(189, 3, 3);
+  position: absolute;
+  top: 30px;
+  left: 31px;
+  border: 2px #222 solid;
 }
 
 .room_header_actions {
@@ -488,10 +525,14 @@ background: #2e7d32;
 .room_member_info {
   display: flex;
   align-items: center;
+  gap: 0.3rem;
 }
 
 .room_member_info img{
-  margin-right: 9px;
+  width: 29px;
+  height: 29px;
+  border-radius: 69px;
+  border: 3px solid black;
 }
 
 .room_member_image {
@@ -499,3 +540,206 @@ background: #2e7d32;
   height: 29px;
   border-radius: 10px;
 }
+
+#modify_profile {
+  background-color:#2f3136;
+  border-radius: 13px;
+  margin: 0 auto;
+  margin-top: 220px;
+  width: 390px;
+  margin-bottom: 20px;
+}
+
+#modify_profile h5 {
+  margin: 0;
+  margin-bottom: 9px;
+  color: #adafb2;
+}
+
+#modify_profile input,.modal_container input  {
+  background-color: #202225;
+  border: none;
+  outline: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 100%;
+  color: rgb(157, 157, 157);
+}
+
+#modify_username {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 30px;
+}
+
+#modify_password {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+#modify_profile button{
+  background-color: #766ac8;
+  border: none;
+  padding-left: 5px;
+  padding-right: 5px;
+  cursor: pointer;
+  width: 33%;
+}
+
+#modify_profile button:hover {
+  background-color: #847bc0;
+  transition: all 0.5s ease-out;
+}
+
+#modify_response {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.overlay {
+  background-color:rgba(0, 0, 0, 0.5);
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal_container {
+  background-color: #36393f;
+}
+
+.modal_container input {
+  width: 100%;
+}
+
+.modal_container .submit_password_button{
+  background-color: #2c2d31;
+  padding: 7px;
+  padding-right: 19.9px;
+  text-align: right;
+}
+
+#reset_password_form {
+  margin-bottom: 20px;
+  padding: 10px 30px 0px 30px;
+}
+
+.modal_container .submit_password_button button {
+  background-color: #5865f2;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  padding: 9px 22px 9px 22px;
+}
+
+.modal_container .submit_password_button button:hover {
+  opacity: 0.7;
+  transition: all 0.3s ease-out;
+  
+}
+
+.profile_info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 20px;
+  background-color: rgba(115, 181, 238, 0.7);
+  padding-left: 15px;
+  padding-top: 5px;
+  border-top-left-radius: 13px;
+  border-top-right-radius: 13px;
+}
+
+.password_form {
+  padding: 0px 20px 20px 20px;
+}
+
+.profile_info img {
+  border-radius: 100px;
+  width: 15%;
+  height: 15%;
+  border: 3px solid black;
+  margin: 7px 0px 7px 0px;
+}
+
+input {
+  padding-left: 8px;
+}
+
+.typing_blink_message {
+  gap: 0.13rem;
+}
+
+.blinking{
+  animation: 1s blink ease infinite;
+  width: 9px;
+  height: 9px;
+  border-radius: 100%
+}
+
+.blinking_second {
+  animation: 1s blink_second ease infinite;
+  width: 9px;
+  height: 9px;
+  border-radius: 100%
+}
+
+.blinking_third {
+  animation: 1s blink_third ease infinite;
+  width: 9px;
+  height: 9px;
+  border-radius: 100%
+}
+
+@keyframes blink_second {
+  from, to {
+    opacity: 0;
+    background-color: black;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+    background-color: black;
+  }
+  25% {
+    opacity: 1;
+    background-color: black;
+  }
+   
+    50% {
+    opacity: 0;
+    background-color: black; 
+  }
+  
+  75%{
+    opacity: 1;
+    background-color: black; 
+  }
+  100%{
+    opacity: 0;
+    background-color: black;
+  }
+}
+
+@keyframes blink_third {
+  from, to {
+    opacity: 0;
+    background-color: black;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+

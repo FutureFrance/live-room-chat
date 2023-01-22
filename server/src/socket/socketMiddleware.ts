@@ -29,16 +29,20 @@ export const verifyUser = async (token: string, room_id: string): Promise<IVerif
         .catch(err => { throw { errorMessage: "Fatal error when searching for room" }});
         
         if (!ROOM) throw { errorMessage: "User is not a member of this room" }
+
+        const MEMBERIN = await RoomModel.find({participants: USER._id}, {password: 0, participants: 0, image: 0}).lean()
+        .catch(err => { throw { errorMEssage: "Fatal error, unable to find rooms in which this is user is in"} });
         
         const MESSAGES = await MessageModel.find({room: ROOM._id}).populate('owner', {password: 0, _id: 0})
         .catch(err => { throw { errorMessage: "Fatal error when searching for messages in this room" }});
 
-        return { USER, ROOM, MESSAGES, errorMessage: "none" }
+        return { USER, ROOM, MESSAGES, MEMBERIN, errorMessage: "none" }
     } catch(err: any) {
         return {    
             USER: {_id: "", username: "", password: "", image: ""}, 
             ROOM: {_id: "", name: "", owner: new Types.ObjectId(), password: "", participants: [], image: ""}, 
             MESSAGES: [{_id: new Types.ObjectId(), owner: new Types.ObjectId(), room: new Types.ObjectId()}], 
+            MEMBERIN: [{_id: new Types.ObjectId(), name: "", owner: new Types.ObjectId()}],
             errorMessage: err, 
         }
     }

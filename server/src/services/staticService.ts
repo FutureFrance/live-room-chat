@@ -24,7 +24,7 @@ class StaticService {
         return true;
     }
 
-    async uploadProfileImage(userId: string, imagePath: string) {
+    async uploadProfileImage(userId: string, imagePath: string): Promise<boolean> {
         const user = await UserModel.findOne({_id: userId})
         .catch(err => {throw ApiError.BadRequest(500, "Fatal error while trying to find user")});
 
@@ -41,7 +41,7 @@ class StaticService {
 
         await user.save();
 
-        return true
+        return true;
 
     }
 

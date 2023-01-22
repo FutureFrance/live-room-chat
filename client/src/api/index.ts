@@ -67,6 +67,24 @@ class ApiService {
     async getFilteredMessage(query: string, roomId: string) {
         return await api.get(`/messages?query=${query}&room=${roomId}`);
     }
+
+    async changeUsername(newUsername: string) {
+        const response = await api.post<{newUsername: string}>(`/update/user/username`, JSON.stringify({
+            username: newUsername}), {
+            headers: {"Content-Type": "application/json"}                
+        });
+
+        return response;
+    }
+
+    async changePassword(current_password: string, password: string, repeat_password: string) {
+        const response = await api.post("/update/user/password", JSON.stringify({
+            current_password, password, repeat_password}), {
+            headers: {"Content-Type": "application/json"}
+        });
+
+        return response;
+    }
 }
 
 export const apiService = new ApiService();

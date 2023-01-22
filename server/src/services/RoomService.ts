@@ -14,7 +14,7 @@ const SALT = process.env.SALT as string;
 
 class RoomService {
     async create(room_name: string, room_password: string, room_repeated_password: string, user: string): Promise<Omit<IRoom, 'password'|'image'>> {
-        const isRoom = await RoomModel.findOne({name: room_name}, {password: 0}, {image: 0})
+        const isRoom = await RoomModel.findOne({name: room_name}, {password: 0}, {image: 0, nameChanges: 0})
         .catch(err => {throw ApiError.BadRequest(500, "Fatal error trying to find this room")});
 
         if (isRoom) throw ApiError.BadRequest(400, "This room is already registered");
@@ -36,7 +36,7 @@ class RoomService {
     }
 
     async join(room_name: string, room_password: string, userId: string): Promise<Omit<IRoom, 'password'|'image'>> {
-        const room = await RoomModel.findOne({name: room_name}, {image: 0})
+        const room = await RoomModel.findOne({name: room_name}, {image: 0, nameChanges: 0})
         .catch(err => {throw ApiError.BadRequest(500, "Fatal error trying to search for this room")});
 
         if (!room) throw ApiError.BadRequest(400, "There is no such room");
@@ -83,6 +83,41 @@ class RoomService {
         .catch(err => { throw ApiError.BadRequest(500, `Fatal error trying to fetch the messages ${err}`)});
 
         return filteredMessages;
+    }
+
+    async updateRoomName(userId: string, newName: string, roomId: string): Promise<string> {
+        const room = await RoomModel.findOne({owner: userId, _id: roomId})
+        .catch(err => { throw ApiError.BadRequest(500, "Fatal error occurred when trying to update this room")});
+
+        if (!room) throw ApiError.BadRequest(400, "Unable to update this room");
+        if (newName === room.name) throw ApiError.BadRequest(400, "This is the current room name");
+        if (room.nameChanges === 3) throw ApiError.BadRequest(400, "You cant change the room name anymore");
+
+        room.name = newName;
+        room.nameChanges = room.nameChanges! + 1;
+
+        await room.save();
+
+        return room.name;
+    }
+
+    async updateRoomPassword(userId: string, roomId: string, current_password: string, roomPassword: string, roomRepeatPassword: string): Promise<void> {
+        if (roomPassword !== roomRepeatPassword) throw ApiError.BadRequest(400, "Passwords do not match");
+
+        const room = await RoomModel.findOne({owner: userId, _id: roomId})
+        .catch(err => { throw ApiError.BadRequest(500, "Fatal error occurred when searching for this room")});
+
+        if (!room) throw ApiError.BadRequest(400, "Unable to find this room");
+
+        const hashMatches = await bcrypt.compare(current_password, room.password);
+        
+        if (!hashMatches) throw ApiError.BadRequest(400, "Incorrect password");
+
+        const passwordHash = await bcrypt.hash(roomPassword, parseInt(SALT));
+
+        room.password = passwordHash;
+
+        await room.save();
     }
 }
 

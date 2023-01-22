@@ -6,7 +6,8 @@ export interface IUser {
     image: string, 
     username: string,
     password: string,
-    online?: boolean
+    online?: boolean,
+    usernameChanges?: number
 }
 
 export interface IRoom {
@@ -15,7 +16,8 @@ export interface IRoom {
     owner: Types.ObjectId,
     password: string,
     participants: Array<Types.ObjectId>,
-    image: string
+    image: string,
+    nameChanges?: number
 }
 
 export interface IMessage {
@@ -50,6 +52,7 @@ export interface IVerify {
     USER: IUser, 
     ROOM: IRoomSocket, 
     MESSAGES: IMessage[], 
+    MEMBERIN: Array<Omit<IRoom, 'password' | 'image' | 'participants'>>
     errorMessage: string,
 }
 
@@ -64,4 +67,10 @@ export interface IRoomSocket extends Omit<IRoom, 'participants'>{
 
 export interface IPopulateParticipants {
     participants: Array<Omit<IUser, 'password'>>
+}
+
+export interface IUpdateProfile {
+    username: string;
+    password: string; 
+    repeat_password: string;
 }

@@ -13,8 +13,8 @@ const Room = ({room}: IProp) => {
             <div className="room-profile" tabIndex={0}>      
                 <div className="room-profile-content" tabIndex={0}> 
                     {room.image 
-                        ? <img src={`http://localhost:3003/images/${room.image}`} alt="" />
-                        : <img src={`http://localhost:3003/images/not_found.jpg`} alt="" />
+                        ? <img src={`http://${process.env.REACT_APP_HOSTNAME}:3003/images/${room.image}`} alt="" />
+                        : <img src={`http://${process.env.REACT_APP_HOSTNAME}:3003/images/not_found.jpg`} alt="" />
                     }
                     <p>{room.name}</p>
                 </div>

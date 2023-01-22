@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { IUser, IRoomSocket, IMessage } from "../../interfaces";
+import { IUser, IRoomSocket, IMessage, IRoom } from "../../interfaces";
 import { verifyUser } from "./socketMiddleware";
 import SocketService from "./socketService";
 
@@ -12,19 +12,15 @@ export function chat(io: any): void {
         let USER: IUser;
         let ROOM: IRoomSocket = {} as IRoomSocket;
         let MESSAGES: IMessage[];
+        let MEMBERIN: Array<Omit<IRoom, 'password' | 'participants' | 'image'>>
         let sessionRoomConnects: Array<string> = [];
         let isSessionSet = false;
         
         const getRoomMembers = async() => {
-            let sockets = await io.in(String(ROOM._id)).fetchSockets();
-
-            let OnlineUsernames: Array<string> = [];
             let roomMembersOnline: Array<Omit<IUser, 'password'>> = [];
             let roomMembersOffline: Array<Omit<IUser, 'password'>> = [];
 
-            sockets.map((conn: Socket) => !OnlineUsernames.includes(conn.data.username) && OnlineUsernames.push(conn.data.username));
-
-            ROOM.participants.map((member) => OnlineUsernames.includes(member.username) 
+            ROOM.participants.map((member) => SESSIONS.includes(member.username)
             ? roomMembersOnline.push({...member, online: true}) 
             : roomMembersOffline.push({...member, online: false}));
 
@@ -36,11 +32,12 @@ export function chat(io: any): void {
             
             const information = await verifyUser(authorizationToken, roomId);
 
-            if (information.errorMessage !== "none") {
-                return socket.emit("on_error", information.errorMessage);
-            }
+            if (information.errorMessage !== "none") return socket.emit("on_error", information.errorMessage);
 
-            [USER, ROOM, MESSAGES] = [information.USER, information.ROOM, information.MESSAGES];
+            [USER, ROOM, MESSAGES, MEMBERIN] = [information.USER, information.ROOM, information.MESSAGES, information.MEMBERIN];
+
+            !isSessionSet && SESSIONS.push(USER.username);
+            isSessionSet = true;
 
             socket.data.username = USER.username;
             socket.data.image = USER.image;
@@ -53,11 +50,9 @@ export function chat(io: any): void {
 
             const connectedClients = await getRoomMembers();
 
-            io.sockets.in(String(ROOM._id)).emit("room_members", connectedClients);
-            
-            !isSessionSet && SESSIONS.push(USER.username);
-
-            isSessionSet = true;
+            MEMBERIN.map((room) => {
+                io.sockets.in(String(room._id)).emit("room_members", connectedClients);
+            });
         }
 
         const sendMessage = async(messageContent: string) => {
@@ -74,8 +69,18 @@ export function chat(io: any): void {
                 username: USER.username
             });
         }
+
+        const typingActivated = async() => {
+            socket.broadcast.to(String(ROOM._id)).emit("member_is_typing", USER);
+        }
+
+        const typingDeactivated = async() => {
+            socket.broadcast.to(String(ROOM._id)).emit("member_is_not_typing");
+        }
         
         socket.on("get_info", getInfo);    
+        socket.on("typing_activated", typingActivated);
+        socket.on("typing_deactivated", typingDeactivated);
         socket.on("send_message", sendMessage);
 
         socket.on("disconnect", async() => {
@@ -83,12 +88,12 @@ export function chat(io: any): void {
                 const activeSessionCount = SESSIONS.filter(session => session === USER.username).length;
 
                 if ( activeSessionCount === 1) {
-                    for (let i = 0; i < sessionRoomConnects.length; i++) {
-                        socket.broadcast.to(sessionRoomConnects[i]).emit("disconnected_member", {...USER});
-                    } 
+                    MEMBERIN.map((room) => {
+                        io.sockets.in(String(room._id)).emit("disconnected_member", {...USER});
+                    });
                 } 
 
-                activeSessionCount > 1 && SESSIONS.splice(SESSIONS.indexOf(USER.username), 1);
+                SESSIONS.splice(SESSIONS.indexOf(USER.username), 1);
             } catch(err: unknown) {}
         });
     });

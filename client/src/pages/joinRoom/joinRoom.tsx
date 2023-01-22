@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate  } from 'react-router-dom';
-import { apiService } from '../api';
+import { apiService } from '../../api';
 
 const JoinRoom = () => {
     const [room, setRoom] = useState<string>("");

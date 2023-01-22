@@ -10,7 +10,7 @@ class RoomController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw ApiError.BadRequest(400, "Incorrect information", errors.array());
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
 
             const {room_name, password, repeat_password} = req.body;
             const user = req.headers.user as string;
@@ -27,7 +27,7 @@ class RoomController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw ApiError.BadRequest(400, "Incorrect information", errors.array());
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
             
             const { room_name, room_password } = req.body;
             const user = req.headers.user as string;
@@ -56,7 +56,7 @@ class RoomController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw ApiError.BadRequest(400, "Incorrect information", errors.array());
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
 
             const { room_name } = req.body;
             
@@ -78,6 +78,10 @@ class RoomController {
 
     static async getFilteredMessages(req: Request, res: Response, next: NextFunction): Promise<Response<IMessage[]> | undefined> {
         try {
+            const errors = validationResult(req);
+
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
+
             const query = req.query.query as string;
             const room = req.query.room as string;
             const user = req.headers.user as string
@@ -88,6 +92,40 @@ class RoomController {
         } catch(err: unknown) {
             next(err);
         }
+    }
+
+    static async updateRoomName(req: Request, res: Response, next: NextFunction): Promise<Response<{newName: string}> | undefined> {
+        try {
+            const errors = validationResult(req);
+
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
+
+            const userId = req.headers.user as string;
+            const [roomId, roomName] = [req.body.room, req.body.room_name];
+
+            const newName = await roomService.updateRoomName(userId, roomName, roomId);
+
+            return res.status(200).json({newName});
+        } catch(err: unknown) {
+            next(err);
+        }
+    }
+
+    static async updateRoomPassword(req: Request, res: Response, next: NextFunction): Promise<Response<boolean> | undefined> {
+        try {
+            const errors = validationResult(req);
+
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
+
+            const userId = req.headers.user as string;
+            const [roomId, current_password, roomPassword, roomRepeatPassword] = [req.body.roomId, req.body.current_password, req.body.roomPassword, req.body.roomRepeatPassword];
+
+            await roomService.updateRoomPassword(userId, roomId, current_password, roomPassword, roomRepeatPassword);
+
+            return res.status(200).json({success: true});
+        } catch(err: unknown) {
+            next(err);
+        } 
     }
 }
 

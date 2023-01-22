@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { apiService } from '../api';
+import { apiService } from '../../api';
 
 const CreateRoom = () => {
     const [roomName, setRoomName] = useState<string>("");

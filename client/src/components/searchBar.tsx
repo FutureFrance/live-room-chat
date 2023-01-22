@@ -59,7 +59,7 @@ const SearchBar = () => {
                 }
             </div>
 
-            {showSearchBox && <div className="filtered_result" onClick={(e) => { setSearchBoxFocus(true) }}>
+            {showSearchBox && <div className="filtered_result" onClick={(e) => { e.stopPropagation() }}>
                 {data.length > 0
                 ?   <>
                         {data.map((message) => {

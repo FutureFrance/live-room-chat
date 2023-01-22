@@ -12,6 +12,10 @@ class SocketService {
             createdAt:  now.getHours() + ':' + now.getMinutes()
         }).catch(err => {return `DBUnable to create the message` });
 
+        if (typeof message === 'string') return `DBUnable to create the message`
+
+        await message.populate('owner');
+
         return message;
     }
 }

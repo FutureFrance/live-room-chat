@@ -16,7 +16,8 @@ export interface IUser {
     _id?: string,
     image?: string,
     username: string,
-    online?: boolean
+    online?: boolean,
+    usernameChanges?: number
 }
 
 export interface IRegisterResponse {

@@ -1,13 +1,14 @@
 import './App.css';
 import {Routes, Route } from 'react-router-dom';
-import Chat from './components/chat';
-import JoinRoom from './components/joinRoom';
-import Registration from './components/registration';
-import Login from './components/login';
+import Chat from './pages/chat/chat';
+import JoinRoom from './pages/joinRoom/joinRoom';
+import Registration from './pages/registeration/registration';
+import Login from './pages/login/login';
 import RequireAuth from './components/verifyAuth';
-import CreateRoom from './components/createRoom';
+import CreateRoom from './pages/createRoom/createRoom';
 import Rooms from './components/rooms';
 import Redirect from './components/redirect';
+import Profile from './pages/profile/profile';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/room/join" element={<JoinRoom />}></Route>
           <Route path="/lobby" element={<Rooms/>}></Route>
           <Route path="/room/create" element={<CreateRoom />}></Route>
+          <Route path="/profile" element={<Profile/>}></Route>
         </Route>
 
         <Route path="/*" element={<Redirect />}></Route>
