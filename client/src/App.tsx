@@ -6,7 +6,7 @@ import Registration from './pages/registeration/registration';
 import Login from './pages/login/login';
 import RequireAuth from './components/verifyAuth';
 import CreateRoom from './pages/createRoom/createRoom';
-import Rooms from './components/rooms';
+import Lobby from './pages/lobby/lobby';
 import Redirect from './components/redirect';
 import Profile from './pages/profile/profile';
 
@@ -20,7 +20,7 @@ function App() {
         <Route element={<RequireAuth />}>
           <Route path="/chat/:room" element={<Chat />}></Route>
           <Route path="/room/join" element={<JoinRoom />}></Route>
-          <Route path="/lobby" element={<Rooms/>}></Route>
+          <Route path="/lobby" element={<Lobby />}></Route>
           <Route path="/room/create" element={<CreateRoom />}></Route>
           <Route path="/profile" element={<Profile/>}></Route>
         </Route>

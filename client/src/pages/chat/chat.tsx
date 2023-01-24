@@ -10,8 +10,12 @@ import SearchBar from '../../components/searchBar';
 import OnlineMembers from './onlineUsers';
 import MemberTyping from './memberTyping';
 import useDebounce from '../../hooks';
+import Modal from '../../components/modal';
+import RoomActionsModal from '../../components/roomActionsModal';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const Chat = () => {
+    const [file, setFile] = useState<File>();
     const [typingOn, setTypingOn] = useState<boolean>(false);
     const [memberIsTyping, setMemberIsTyping] = useState<boolean>(false);
     const [memberTypingInfo, setMemberTypingInfo] = useState<Omit<IUser, 'password'>>({} as Omit<IUser, 'password'>);
@@ -26,9 +30,10 @@ const Chat = () => {
     const [socketError, setSocketError] = useState<string>("");
     const navigate = useNavigate();
     const debounceAction = useDebounce(messageContent, 1500); 
+    const [ isModal, setIsModal ] = useState<boolean>(false); 
 
-    async function sendMessage() {
-        if (messageContent !== "") socket.emit("send_message", messageContent);    
+    async function sendMessage(isFile: boolean) {
+        if (messageContent !== "" || isFile) socket.emit("send_message", {messageContent, isFile});    
     }
 
     async function handleActiveTyping(e: React.ChangeEvent<HTMLInputElement>) {
@@ -45,9 +50,14 @@ const Chat = () => {
 
     async function onSubmitMessage(e: React.KeyboardEvent<HTMLInputElement>) {
         if (e.key === "Enter") {
-            sendMessage();
-            setTypingOn(false); 
-            socket.emit("typing_deactivated");
+            if (!file) {
+                sendMessage(false);
+                setTypingOn(false); 
+                socket.emit("typing_deactivated");
+
+                return
+            } 
+            sendMessage(true);
         }
     }
     
@@ -130,7 +140,7 @@ const Chat = () => {
     return (
         <section className={showMembers ? "lobby" : "lobby_members_off"}>
             <div className='rooms-layout'>
-                <Rooms></Rooms>
+                <Rooms setModal={setIsModal}></Rooms>
             </div>
             
             <div className="chat-window">
@@ -170,7 +180,13 @@ const Chat = () => {
                     </ScrollToBottom>
                 </div>
                 
-                <div className="chat-footer">
+                <div className="chat_footer">
+                    <div id="chat_file_upload">
+                        <label htmlFor="chat_uploader" className="chat_uploader_container">
+                            <input id="chat_uploader" onChange={(e) => {setFile(e.target.files?.[0])}} type="file" accept=".jpeg,.png.,.jpg" />
+                        </label>
+                        <AddCircleIcon className="chat_icon_upload"/>
+                    </div>
                     <input className="message_input" type="text" placeholder="Send mesage..." 
                         onChange={handleActiveTyping}
                         onKeyPress={onSubmitMessage}
@@ -196,6 +212,12 @@ const Chat = () => {
                     </div>
                 </div>
             }
+
+        {isModal && 
+            <Modal setModalOn={setIsModal}> 
+                <RoomActionsModal />
+            </Modal>
+        }
         </section>
     )
 }

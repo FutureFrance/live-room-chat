@@ -13,6 +13,16 @@ const Registration = () => {
 
     async function registerRequest(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        if (username.length < 3 || username.length > 22) {
+            setApiError('username must be between 3 and 22 characters');
+            return;
+        }
+
+        if (password.length < 6 || password.length > 29 || repeatedPassword.length < 6 || repeatedPassword.length > 29) {
+            setApiError('password must be between 3 and 22 characters');
+            return;
+        }
+
         try {
             await apiService.register(username, password, repeatedPassword);
 

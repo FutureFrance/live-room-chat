@@ -5,6 +5,8 @@ import { useOutletContext } from 'react-router-dom';
 import { IUser } from '../../interfaces';
 
 const Profile = () => {
+    const userContext: Omit<IUser, 'password'> = useOutletContext();
+    const [profileImage, setProfileImage] = useState<string>(userContext.image as string);
     const [username, setUsername] = useState<string>("");
     const [changedUsername, setChangedUsername] = useState<string>("");
     const [currentPassword, setCurrentPassword] = useState<string>("");
@@ -13,7 +15,7 @@ const Profile = () => {
     const [modalOn, setModalOn] = useState<boolean>(false);
     const [apiResponse, setApiResponse] = useState<string>("");
     const [requestSuccess, setRequestSuccess] = useState<boolean>(false);
-    const context: Omit<IUser, 'password'> = useOutletContext();
+    
 
     async function changeUsername(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -42,12 +44,36 @@ const Profile = () => {
         }
     }
 
+    async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+        try {
+            if (!e.target.files?.[0]) return 
+
+            const response = await apiService.changeAvatarImage(e.target.files?.[0]);
+
+            setProfileImage(response.data.image);
+            setRequestSuccess(true);
+            setApiResponse("Avatar changed successfully");
+        } catch(err) {
+            setRequestSuccess(false);
+            setApiResponse("Unable to change the avatar");
+        }
+    }
+
     return (
         <>
             <div id="modify_profile">
                 <div className="profile_info">
-                    <img src={`http://${process.env.REACT_APP_HOSTNAME}:3003/images/${context.image}`} alt="" />
-                    <h3>{changedUsername === "" ? context.username : changedUsername}</h3>
+                    <div id="profile_avatar" onClick={() => console.log("clieck")}>
+                        <label htmlFor="avatar_update" className="drop-container">
+                            <h5>Change</h5>
+                            <input id="avatar_update" onChange={handleAvatarUpload} className="profile_image_update" type="file" accept=".jpg,.png,.jpeg"/>
+                        </label>
+                        <img src={profileImage.length === 0 
+                            ? `http://${process.env.REACT_APP_HOSTNAME}:3003/images/${profileImage}`
+                            : `http://${process.env.REACT_APP_HOSTNAME}:3003/images/${profileImage}`
+                        } alt="" />
+                    </div>
+                    <h3>{changedUsername === "" ? userContext.username : changedUsername}</h3>
                 </div>
 
                 <div className="password_form">
@@ -77,7 +103,6 @@ const Profile = () => {
                 <>
                 <form onSubmit={changePassword}>
                     <div id="reset_password_form">
-                        
                             <h2>Update your password</h2>
                             <h5>Current Password</h5>   
                             <input className="current_password" type="password" 

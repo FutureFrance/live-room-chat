@@ -9,6 +9,18 @@ const Registration = () => {
     const navigate = useNavigate();
 
     async function loginRequest(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        if (username.length < 3 || username.length > 22) {
+            setApiError('username must be between 3 and 22 characters');
+            return;
+        }
+
+        if (password.length < 6 || password.length > 29) {
+            setApiError('password must be between 3 and 22 characters');
+            return;
+        }
+
         try {
             e.preventDefault();
             await apiService.login(username, password);

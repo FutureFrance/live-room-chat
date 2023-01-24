@@ -73,7 +73,7 @@ class UserController {
 
             await staticService.uploadProfileImage(userId, imagePath);
 
-            return res.status(200).json({success: true});
+            return res.status(200).json({success: true, image: imagePath});
         } catch(err: unknown) {
             const imagePath = req.file?.filename as string;
 

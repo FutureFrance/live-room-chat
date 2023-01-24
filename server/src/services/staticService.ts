@@ -31,7 +31,7 @@ class StaticService {
         if (!user) throw ApiError.BadRequest(400, "There is no such user");
 
         if (user.image.length > 2) {
-            const pathToDelete = './static' + imagePath;
+            const pathToDelete = './static/' + user.image; 
 
             fs.unlink(pathToDelete, (err) => {
                 if (err) throw ApiError.BadRequest(500, "Fatal error, unable to delete the file");
@@ -46,7 +46,7 @@ class StaticService {
     }
 
     async removeImage(imagePath: string): Promise<void> {
-        const pathToDelete = './static/' + imagePath;
+        const pathToDelete = `./static/` + imagePath;
 
         fs.unlink(pathToDelete, (err) => {
             if (err) throw ApiError.BadRequest(400, "Unable to delete this image");

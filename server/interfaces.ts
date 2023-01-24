@@ -23,7 +23,8 @@ export interface IRoom {
 export interface IMessage {
     _id: Types.ObjectId,
     owner: Types.ObjectId,
-    room: Types.ObjectId
+    room: Types.ObjectId,
+    isFIle?: string
 }
 
 export interface ITokenPayload {

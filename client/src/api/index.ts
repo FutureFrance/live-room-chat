@@ -85,6 +85,15 @@ class ApiService {
 
         return response;
     }
+
+    async changeAvatarImage(file: File) {
+        const response = await api.post<{success: boolean, image: string}>("/profile/image/upload", {
+            image: file}, {
+            headers: {'Content-Type': 'multipart/form-data'}
+        })
+
+        return response;
+    }
 }
 
 export const apiService = new ApiService();

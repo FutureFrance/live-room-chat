@@ -1,11 +1,15 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, Dispatch } from 'react';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { apiService } from '../api';
 import { IRoom } from '../interfaces';
 import Room from './room';
 
-const Rooms = () => {
+interface IProps {
+    setModal: Dispatch<boolean>
+}
+
+const Rooms = ({setModal}: IProps) => {
     const [ rooms, setRooms ] = useState<IRoom[]>([]);
     const [ gotResponse, setGotResponse ] = useState<boolean>(false);
     const [ error, setError ] = useState<string>("");
@@ -26,9 +30,13 @@ const Rooms = () => {
     }, []);
 
     return (
+        <>
         <div className="left_loby_section">
             <div className="chat_header">
                 <p>Member in:</p>
+                <div className="rooms_action_container">
+                    <AddCircleIcon onClick={() => setModal(true)} className="rooms_action"></AddCircleIcon>
+                </div>
             </div>
             <div className="rooms-profile">
                 <ScrollToBottom className="rooms-container">
@@ -40,12 +48,8 @@ const Rooms = () => {
                     { error && <p>Error ocurred: {error}</p>}
                 </ScrollToBottom>
             </div>
-
-            <div className="room-action-buttons">
-                <Link to="/room/join"><button className='action-button'>Join a room</button></Link><br/><br/>
-                <Link to="/room/create"><button className='action-button'>Create a new room</button></Link>
-            </div>
         </div>
+        </>
     )
 }
 

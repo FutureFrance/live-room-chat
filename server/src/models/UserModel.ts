@@ -5,7 +5,7 @@ interface IUserModel extends IUser, Document {}
 
 const UserModel = new Schema({
     username: {type: String, unique: true, require: true},
-    image: {type: String, default: "", require: true},
+    image: {type: String, default: "default_avatar.png", require: true},
     password: {type: String, require: true},
     usernameChanges: {type: Number, require: true, default: 0}
 }, {versionKey: false});

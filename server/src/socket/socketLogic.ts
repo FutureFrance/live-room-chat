@@ -55,8 +55,9 @@ export function chat(io: any): void {
             });
         }
 
-        const sendMessage = async(messageContent: string) => {
-            const message = await SocketService.createMessage(messageContent, USER._id, String(ROOM._id));
+        const sendMessage = async(messageContent: string, isFile: false) => {
+            // if were here and he didnt joined i ll get error crash undefined id
+            const message = await SocketService.createMessage(messageContent, USER._id, String(ROOM._id), isFile);
 
             if (message === 'DBUnable to create the message') return socket.emit("on_error", message);
 
