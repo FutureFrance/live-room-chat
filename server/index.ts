@@ -18,7 +18,7 @@ const HOSTNAME = process.env.HOSTNAME as string;
 const app = express();
 const server = http.createServer(app);
 
-app.use('/images', express.static('static'));
+app.use('/static', express.static('static'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
@@ -40,6 +40,7 @@ async function connectDB(DB_URL: string) {
 } connectDB(DB_URL);
 
 const io = new Server(server, {
+    maxHttpBufferSize: 1e7,
     cors: {
       origin: `http://${HOSTNAME}:3000`,
       methods: ["GET", "POST"],

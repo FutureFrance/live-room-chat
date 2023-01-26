@@ -4,7 +4,8 @@ export interface IMessage {
     content: string,
     owner: IUser, 
     _id: string,
-    createdAt: string
+    createdAt: string,
+    file: string
 }
 
 export interface IData {

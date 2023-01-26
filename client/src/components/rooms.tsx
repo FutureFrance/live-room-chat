@@ -1,5 +1,5 @@
 import { useState, useEffect, Dispatch } from 'react';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import SettingsIcon from '@mui/icons-material/Settings';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { apiService } from '../api';
 import { IRoom } from '../interfaces';
@@ -35,7 +35,7 @@ const Rooms = ({setModal}: IProps) => {
             <div className="chat_header">
                 <p>Member in:</p>
                 <div className="rooms_action_container">
-                    <AddCircleIcon onClick={() => setModal(true)} className="rooms_action"></AddCircleIcon>
+                    <SettingsIcon onClick={() => setModal(true)} className="rooms_action"></SettingsIcon>
                 </div>
             </div>
             <div className="rooms-profile">

@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { ApiError } from "../errorHandlers/apiErrorHandler";
+import MessageModel from '../models/MessageModel';
 import RoomModel from "../models/RoomModel";
 import UserModel from '../models/UserModel';
 
@@ -10,7 +11,7 @@ class StaticService {
 
         if (!room) throw ApiError.BadRequest(400, "This room does not exist or you're not the owner");
 
-        if (room.image.length > 2) {
+        if (room.image.length > 5) {
             const pathToDelete = './static/' + imagePath;
 
             fs.unlink(pathToDelete, (err) => {
@@ -30,7 +31,7 @@ class StaticService {
 
         if (!user) throw ApiError.BadRequest(400, "There is no such user");
 
-        if (user.image.length > 2) {
+        if (user.image.length > 5) {
             const pathToDelete = './static/' + user.image; 
 
             fs.unlink(pathToDelete, (err) => {
@@ -42,7 +43,6 @@ class StaticService {
         await user.save();
 
         return true;
-
     }
 
     async removeImage(imagePath: string): Promise<void> {

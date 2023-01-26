@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import RoomController from '../controllers/RoomController';
 import UserController from '../controllers/UserController';
-import * as UserValidate from '../validations/userValidate';
-import * as RoomValidate from '../validations/roomValidate';
 import { checkAuth } from '../middlewares/checkAuth';
 import { verifyUploadFile } from '../middlewares/fileUploader';
+import * as UserValidate from '../validations/userValidate';
+import * as RoomValidate from '../validations/roomValidate';
 
 const router = Router();
 

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { IUser } from "../../interfaces";
 
 interface IProps {
@@ -12,7 +11,8 @@ const OnlineMembers = ({users}: IProps) => {
                 return (
                     <div className={user.online ? "user_container" : "user_container user_offline"} key={index}>
                         <div className="room_member_info">
-                            <img className="room_member_image" src={`http://${process.env.REACT_APP_HOSTNAME}:3003/images/${user.image}`} alt="" />
+                            <img className="room_member_image" 
+                                src={`http://${process.env.REACT_APP_HOSTNAME}:3003/static/${user.image}`} alt="profile_image" />
                             <p>{user.username}</p>
                         </div>
                         

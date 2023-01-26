@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import useDebounce from '../hooks';
 import SearchIcon from '@mui/icons-material/Search';
 import DeleteIcon from '@mui/icons-material/Delete';
+import {useLocation} from 'react-router-dom';
 import { IMessage } from '../interfaces';
 import { apiService } from '../api';
 
@@ -11,11 +12,12 @@ const SearchBar = () => {
     const [showSearchBox, setShowSearchBox] = useState<boolean>(false);
     const [searchBoxFocus, setSearchBoxFocus] = useState<boolean>(false);
     const debouncedSearchTerm = useDebounce<string>(query, 200);
+    const location = useLocation();
 
     async function getFilteredMessages() {
         if (query.length < 1) return setData([]);
         try {
-            const response = await apiService.getFilteredMessage(query, window.location.pathname.slice(6, 30));
+            const response = await apiService.getFilteredMessage(query, location.pathname.slice(6, 30));
 
             setData(response.data.messages);
         } catch(err) {
@@ -38,7 +40,7 @@ const SearchBar = () => {
     }
 
     async function findMessage(messagesId: string) {
-        window.location.href = `/chat/${window.location.pathname.slice(6, 30)}#${messagesId}`;
+        window.location.href = `/chat/${location.pathname.slice(6, 30)}#${messagesId}`;
     }
 
     useEffect(() => {

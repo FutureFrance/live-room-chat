@@ -8,7 +8,7 @@ const RoomModel = new Schema({
     owner: {type: Schema.Types.ObjectId, ref: 'User', require: true},
     password: {type: String, require: true},
     participants: [{type: Schema.Types.ObjectId, ref: 'User'}],
-    image: {type: String, require: true, default: ""},
+    image: {type: String, require: true, default: "N.png"},
     nameChanges: {type: Number, require: true, default: 0}
 }, {versionKey: false});
 

@@ -59,9 +59,7 @@ class RoomController {
             if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
 
             const { room_name } = req.body;
-            
             const userId = req.headers.user as string;
-
             const imagePath = req.file?.filename as string;
 
             await staticService.uploadRoomImage(imagePath, room_name, userId);

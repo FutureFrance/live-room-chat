@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate }  from 'react-router-dom';
+import { useNavigate, useLocation }  from 'react-router-dom';
 import PeopleIcon from '@mui/icons-material/People';
 import { IMessage, IMessageToClient, IUser, IVerify } from '../../interfaces';
 import Message from './message';
@@ -16,6 +16,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const Chat = () => {
     const [file, setFile] = useState<File>();
+    const [isModal, setIsModal ] = useState<boolean>(false); 
     const [typingOn, setTypingOn] = useState<boolean>(false);
     const [memberIsTyping, setMemberIsTyping] = useState<boolean>(false);
     const [memberTypingInfo, setMemberTypingInfo] = useState<Omit<IUser, 'password'>>({} as Omit<IUser, 'password'>);
@@ -26,45 +27,51 @@ const Chat = () => {
     const [members, setMembers] = useState<Array<IUser>>([]);
     const [messagesLoading, setMessagesLoading] = useState<boolean>(true);
     const [showMembers, setShowMembers] = useState<boolean>(false);
-    const [roomMembers, setRoomMembers] = useState<Array<IUser>>([]);
     const [socketError, setSocketError] = useState<string>("");
-    const navigate = useNavigate();
-    const debounceAction = useDebounce(messageContent, 1500); 
-    const [ isModal, setIsModal ] = useState<boolean>(false); 
+    const debounceAction = useDebounce(messageContent, 1500);
+    const location = useLocation();
+    const navigate = useNavigate(); 
+    // const [roomMembers, setRoomMembers] = useState<Array<IUser>>([]);
 
-    async function sendMessage(isFile: boolean) {
-        if (messageContent !== "" || isFile) socket.emit("send_message", {messageContent, isFile});    
+    async function sendMessage(image: any) {
+        if (messageContent !== "" || image !== "nothing") {
+            console.log(image)
+            socket.emit("send_message", { messageContent, image, filename: file?.name }); 
+        }   
     }
 
     async function handleActiveTyping(e: React.ChangeEvent<HTMLInputElement>) {
-        setMessageContent(e.target.value); 
-
         if (!typingOn && e.target.value.length > 0) {
             socket.emit("typing_activated");
             setTypingOn(true);
-        } else if(e.target.value.length === 0) {
+        } else if(e.target.value.length === 0 && messageContent.length > 0) {
             socket.emit("typing_deactivated");
             setTypingOn(false);
         }
+
+        setMessageContent(e.target.value); 
     }
 
     async function onSubmitMessage(e: React.KeyboardEvent<HTMLInputElement>) {
         if (e.key === "Enter") {
-            if (!file) {
-                sendMessage(false);
-                setTypingOn(false); 
-                socket.emit("typing_deactivated");
+            if (messageContent.length > 0) socket.emit("typing_deactivated");
 
-                return
+            if (!file) {
+                sendMessage("nothing");
+                setTypingOn(false); 
+                setFile(undefined);
+
+                return;
             } 
-            sendMessage(true);
+            sendMessage(file);
+            setFile(undefined);
         }
     }
     
     useEffect(() => {
         if (!socket.connected) socket.connect();
         
-        socket.emit("get_info", window.location.pathname.slice(6, 30));
+        socket.emit("get_info", location.pathname.slice(6, 30)); // change from react hooks
     }, [navigate]);
 
     useEffect(() => {
@@ -72,7 +79,7 @@ const Chat = () => {
     }, [debounceAction]);
 
     useEffect(() => {
-        const ReceiveMessages = (data: any): void => {
+        const ReceiveMessages = (data: any): void => { // set types and stuff
             setMessagesList(prev => [...prev, data.returnMessage]);  
         };
 
@@ -85,7 +92,7 @@ const Chat = () => {
             setMessagesList(data.MESSAGES); 
             setUser(data.USER.username);
             setRoom(data.ROOM.name); 
-            setRoomMembers(data.ROOM.participants);
+            // setRoomMembers(data.ROOM.participants);
 
             setMessagesLoading(false);
         }
@@ -147,7 +154,9 @@ const Chat = () => {
                 <div className="chat_header">
                     <p>Room: {room}</p>
                     <div className="room_header_actions">
-                        <PeopleIcon onClick={() => {setShowMembers(prev => !prev)}} className="members_icon" style={{ color: "black" }} />
+                        <PeopleIcon onClick={() => {
+                            setShowMembers(prev => !prev)}} className="members_icon" style={{ color: "black" }} 
+                        />
                         <SearchBar />
                     </div>
                 </div>
@@ -160,13 +169,7 @@ const Chat = () => {
                             {!messagesLoading 
                             ?   <>
                                     {messagesList.map((message) => {
-                                        return <Message 
-                                                    content={message.content} 
-                                                    owner={message.owner} 
-                                                    id={message._id} current_user={user} 
-                                                    date={message.createdAt} 
-                                                    key={message._id}
-                                                />
+                                        return <Message message={message} current_user={user} key={message._id}/>
                                     })}
                                 </>
                             :   <p className="chat_info">Messages are Loading.....</p>
@@ -183,11 +186,14 @@ const Chat = () => {
                 <div className="chat_footer">
                     <div id="chat_file_upload">
                         <label htmlFor="chat_uploader" className="chat_uploader_container">
-                            <input id="chat_uploader" onChange={(e) => {setFile(e.target.files?.[0])}} type="file" accept=".jpeg,.png.,.jpg" />
+                            <input id="chat_uploader" 
+                                onChange={(e) => {setFile(e.target.files?.[0])}} type="file" 
+                                accept=".jpeg,.png.,.jpg,.mp4,.avi" 
+                            />
                         </label>
                         <AddCircleIcon className="chat_icon_upload"/>
                     </div>
-                    <input className="message_input" type="text" placeholder="Send mesage..." 
+                    <input className="message_input" type="text" placeholder={`Message in | ${room}`} 
                         onChange={handleActiveTyping}
                         onKeyPress={onSubmitMessage}
                         value={messageContent}
@@ -195,7 +201,7 @@ const Chat = () => {
                 </div>
             </div>
             
-            { socketError !== "" ? <p className="err">{socketError}</p> : ""}
+            { socketError !== "" && <p className="err">{socketError}</p> }
             
             { showMembers && 
                 <div className="online_users">
@@ -205,9 +211,9 @@ const Chat = () => {
 
                     <div className="online_users_container">
                         <ScrollToBottom className="members_container">
-                            {members.length > 0 
-                            ? <OnlineMembers users={members}></OnlineMembers>
-                            : ""}
+                            {members.length > 0 &&
+                                <OnlineMembers users={members}></OnlineMembers>
+                            }
                         </ScrollToBottom>
                     </div>
                 </div>

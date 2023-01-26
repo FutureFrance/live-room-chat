@@ -8,7 +8,7 @@ const MemberTyping = ({memberTypingInfo}: IProps) => {
     return (
         <div className='message other'>
             <img className='message_owner_image other' 
-                src={`http://${process.env.REACT_APP_HOSTNAME}:3003/images/${memberTypingInfo.image}`} alt="" 
+                src={`http://${process.env.REACT_APP_HOSTNAME}:3003/static/${memberTypingInfo.image}`} alt="" 
             />
             <div>
                 <div className="message-content typing_blink_message">

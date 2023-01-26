@@ -12,9 +12,10 @@ export function chat(io: any): void {
         let USER: IUser;
         let ROOM: IRoomSocket = {} as IRoomSocket;
         let MESSAGES: IMessage[];
-        let MEMBERIN: Array<Omit<IRoom, 'password' | 'participants' | 'image'>>
+        let MEMBERIN: Array<Omit<IRoom, 'password' | 'participants' | 'image'>> = [];
         let sessionRoomConnects: Array<string> = [];
         let isSessionSet = false;
+        let isTyping = false;
         
         const getRoomMembers = async() => {
             let roomMembersOnline: Array<Omit<IUser, 'password'>> = [];
@@ -55,9 +56,10 @@ export function chat(io: any): void {
             });
         }
 
-        const sendMessage = async(messageContent: string, isFile: false) => {
-            // if were here and he didnt joined i ll get error crash undefined id
-            const message = await SocketService.createMessage(messageContent, USER._id, String(ROOM._id), isFile);
+        const sendMessage = async(data: {messageContent: string, image: string, filename: string}) => {
+            const imagePath = SocketService.uploadFile(data.image, data.filename); // if were here and he didnt joined i ll get error crash undefined id
+            
+            const message = await SocketService.createMessage(data.messageContent, USER._id, String(ROOM._id), imagePath);
 
             if (message === 'DBUnable to create the message') return socket.emit("on_error", message);
 
@@ -72,10 +74,12 @@ export function chat(io: any): void {
         }
 
         const typingActivated = async() => {
+            isTyping = true;
             socket.broadcast.to(String(ROOM._id)).emit("member_is_typing", USER);
         }
 
         const typingDeactivated = async() => {
+            isTyping = false;
             socket.broadcast.to(String(ROOM._id)).emit("member_is_not_typing");
         }
         
@@ -89,6 +93,8 @@ export function chat(io: any): void {
                 const activeSessionCount = SESSIONS.filter(session => session === USER.username).length;
 
                 if ( activeSessionCount === 1) {
+                    if (isTyping) socket.broadcast.to(String(ROOM._id)).emit("member_is_typing", USER); 
+
                     MEMBERIN.map((room) => {
                         io.sockets.in(String(room._id)).emit("disconnected_member", {...USER});
                     });

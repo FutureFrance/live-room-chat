@@ -90,7 +90,7 @@ class ApiService {
         const response = await api.post<{success: boolean, image: string}>("/profile/image/upload", {
             image: file}, {
             headers: {'Content-Type': 'multipart/form-data'}
-        })
+        });
 
         return response;
     }

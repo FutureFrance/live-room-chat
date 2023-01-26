@@ -24,7 +24,7 @@ export interface IMessage {
     _id: Types.ObjectId,
     owner: Types.ObjectId,
     room: Types.ObjectId,
-    isFIle?: string
+    file?: string
 }
 
 export interface ITokenPayload {

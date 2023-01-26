@@ -33,6 +33,8 @@ const Profile = () => {
 
     async function changePassword(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        setModalOn(false);
+
         try {
             await apiService.changePassword(currentPassword, newPassword, repeatPassword);
 
@@ -68,10 +70,7 @@ const Profile = () => {
                             <h5>Change</h5>
                             <input id="avatar_update" onChange={handleAvatarUpload} className="profile_image_update" type="file" accept=".jpg,.png,.jpeg"/>
                         </label>
-                        <img src={profileImage.length === 0 
-                            ? `http://${process.env.REACT_APP_HOSTNAME}:3003/images/${profileImage}`
-                            : `http://${process.env.REACT_APP_HOSTNAME}:3003/images/${profileImage}`
-                        } alt="" />
+                        <img src={`http://${process.env.REACT_APP_HOSTNAME}:3003/static/${profileImage}`} alt="" />
                     </div>
                     <h3>{changedUsername === "" ? userContext.username : changedUsername}</h3>
                 </div>
@@ -122,7 +121,10 @@ const Profile = () => {
                     </div>
 
                     <div className="submit_password_button">
-                        <button type="submit">Done</button>
+                        <div className="profile_modal_action">
+                            <p onClick={() => setModalOn(false)}>Cancel</p>
+                            <button type="submit">Done</button>
+                        </div>
                     </div>
                 </form>
                 </> 
