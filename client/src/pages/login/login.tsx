@@ -22,7 +22,6 @@ const Registration = () => {
         }
 
         try {
-            e.preventDefault();
             await apiService.login(username, password);
             
             navigate('/lobby', {replace: true});

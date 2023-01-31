@@ -3,15 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import { ApiError } from '../errorHandlers/apiErrorHandler';
 
-const storage = multer.diskStorage({
-    destination: function (req: Request, file, callback) {
-        callback(null, './static');
-    },
-    filename: function (req: Request, file, callback) {
-        const fileName = Date.now() + file.originalname.split('.')[0] + path.extname(file.originalname).split('.')[0].replace('\\', '') + '.jpg';
-        callback(null, fileName);
-    }
-});
+const storage = multer.memoryStorage();
 
 export const verifyUploadFile = multer({
     storage: storage,
@@ -22,6 +14,10 @@ export const verifyUploadFile = multer({
         if ((file.originalname.split('.').length !== 2) || (!whitelist.includes(fileExtension))) {
             callback(new ApiError(400, "Only [.png, .jpg, .jpeg] are allowed"));
         }
+
+        const fileName = file.originalname.split('.')[0];
+
+        file.originalname = Date.now() + '-' + fileName + path.extname(fileName.replace('\\', '')) + '.jpg';
 
         callback(null, true);
     },

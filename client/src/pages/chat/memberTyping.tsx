@@ -1,7 +1,7 @@
 import { IUser } from "../../interfaces";
 
 interface IProps {
-    memberTypingInfo: Omit<IUser, 'password'>
+    memberTypingInfo: Omit<IUser, 'password'>;
 }
 
 const MemberTyping = ({memberTypingInfo}: IProps) => {

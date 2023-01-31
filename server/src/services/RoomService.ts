@@ -15,7 +15,7 @@ const SALT = process.env.SALT as string;
 class RoomService {
     async create(room_name: string, room_password: string, room_repeated_password: string, user: string): Promise<Omit<IRoom, 'password'|'image'>> {
         const isRoom = await RoomModel.findOne({name: room_name}, {password: 0}, {image: 0, nameChanges: 0})
-        .catch(err => {throw ApiError.BadRequest(500, "Fatal error trying to find this room")});
+        .catch(() => {throw ApiError.BadRequest(500, "Fatal error trying to find this room")});
 
         if (isRoom) throw ApiError.BadRequest(400, "This room is already registered");
 
@@ -37,14 +37,14 @@ class RoomService {
 
     async join(room_name: string, room_password: string, userId: string): Promise<Omit<IRoom, 'password'|'image'>> {
         const room = await RoomModel.findOne({name: room_name}, {image: 0, nameChanges: 0})
-        .catch(err => {throw ApiError.BadRequest(500, "Fatal error trying to search for this room")});
+        .catch(() => {throw ApiError.BadRequest(500, "Fatal error trying to search for this room")});
 
         if (!room) throw ApiError.BadRequest(400, "There is no such room");
 
         const {password, ...returnRoom} = room.toObject();
         
         const user = await UserModel.findOne({_id: userId})
-        .catch(err => {throw ApiError.BadRequest(500, "Fatal error could not find this user")});
+        .catch(() => {throw ApiError.BadRequest(500, "Fatal error could not find this user")});
 
         if (!user) throw ApiError.BadRequest(400, "This user does not exist");
 
@@ -63,7 +63,7 @@ class RoomService {
 
     async getMemberOf(userId: string): Promise<Omit<IRoom[], 'password'|'participants'>> {
         const rooms = await RoomModel.find({participants: userId}, {password: 0, participants: 0})
-        .catch(err => {throw ApiError.BadRequest(500, "Fatal error ocurred when trying to find rooms")});
+        .catch(() => {throw ApiError.BadRequest(500, "Fatal error ocurred when trying to find rooms")});
 
         return rooms;
     }
@@ -80,14 +80,14 @@ class RoomService {
             room: new ObjectId(roomId),
             content: { $regex: `.*${query}.*`, $options: 'i'} // should do some character escaping like ?
         }).populate('owner', {password: 0, _id: 0})
-        .catch(err => { throw ApiError.BadRequest(500, `Fatal error trying to fetch the messages ${err}`)});
+        .catch(() => { throw ApiError.BadRequest(500, `Fatal error trying to fetch the messages`)});
 
         return filteredMessages;
     }
 
     async updateRoomName(userId: string, newName: string, roomId: string): Promise<string> {
         const room = await RoomModel.findOne({owner: userId, _id: roomId})
-        .catch(err => { throw ApiError.BadRequest(500, "Fatal error occurred when trying to update this room")});
+        .catch(() => { throw ApiError.BadRequest(500, "Fatal error occurred when trying to update this room")});
 
         if (!room) throw ApiError.BadRequest(400, "Unable to update this room");
         if (newName === room.name) throw ApiError.BadRequest(400, "This is the current room name");
@@ -105,7 +105,7 @@ class RoomService {
         if (roomPassword !== roomRepeatPassword) throw ApiError.BadRequest(400, "Passwords do not match");
 
         const room = await RoomModel.findOne({owner: userId, _id: roomId})
-        .catch(err => { throw ApiError.BadRequest(500, "Fatal error occurred when searching for this room")});
+        .catch(() => { throw ApiError.BadRequest(500, "Fatal error occurred when searching for this room")});
 
         if (!room) throw ApiError.BadRequest(400, "Unable to find this room");
 

@@ -1,13 +1,18 @@
-import '../../App.css';
+import './styles.css';
+import { useState } from 'react';
+import Modal from '../../components/modal';
 import { IMessage } from '../../interfaces';
 
-interface IProps {
+interface IMessageProps {
     message: IMessage,
     current_user: string
 }
 
-const Message = ({message, current_user}: IProps) => {
-    const isVideo = ['mp4', 'avi'];
+const isVideo = ['mp4', 'avi'];
+
+const Message = ({message, current_user}: IMessageProps) => {
+    const [imagePopOut, setImagePopOut] = useState<boolean>(false);
+    const [chatImage, setChatImage] = useState<string>("");
 
     return (
         <div id={message._id} className={current_user === message.owner.username ? `message you` : `message other`}>
@@ -23,13 +28,13 @@ const Message = ({message, current_user}: IProps) => {
                     </p>
                 </div>
                 <div className={current_user === message.owner.username 
-                    ? message.file !== "none" 
+                    ? message.file !== "" 
                         ? `message-content you file_on` 
                         : 'message-content you'
-                    : message.file !== "none"
+                    : message.file !== ""
                         ? `message-content file_on` 
                         : `message-content other`}>
-                    {message.file !== "none" 
+                    {message.file !== "" 
                     
                     ?  isVideo.includes(message.file.split('.')[1]) 
                         ?
@@ -47,6 +52,10 @@ const Message = ({message, current_user}: IProps) => {
                         <div className="message_with_file_container">
                             <img className={message.content.length < 1 ? "file_round" : ""}  
                                 src={`http://${process.env.REACT_APP_HOSTNAME}:3003/static/${message.file}`} alt="" 
+                                onClick={() => {
+                                    setImagePopOut(true);
+                                    setChatImage(message.file);
+                                }}
                             />
                             
                             <div className={current_user === message.owner.username ? "message_content_file you" : "message_content_file other"}>
@@ -55,6 +64,12 @@ const Message = ({message, current_user}: IProps) => {
                         </div>
             
                     : <p>{message.content}</p>
+                    }
+
+                    {imagePopOut && 
+                        <Modal setModalOn={setImagePopOut}>
+                            <img className="image_pop_out" src={`http://${process.env.REACT_APP_HOSTNAME}:3003/static/${chatImage}`} alt="" />
+                        </Modal>
                     }
                 </div>
             </div>

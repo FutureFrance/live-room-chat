@@ -5,7 +5,7 @@ interface IMessageModel extends IMessage, Document {}
 
 const MessageModel = new Schema({
     content: {type: String, require: true},
-    file: {type: String, require: true, default: "none"},
+    file: {type: String, require: true, default: ""},
     owner: {type: Schema.Types.ObjectId, ref: 'User', require: true},
     room: {type: Schema.Types.ObjectId, ref: 'Room', require: true},
     createdAt: { type : String, require: true }

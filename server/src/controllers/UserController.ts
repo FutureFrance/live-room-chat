@@ -10,7 +10,7 @@ class UserController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, `Invalid data ${errors.array()[0].msg}`, errors.array()));
 
             const { username, password, repeat_password } = req.body;
 
@@ -32,7 +32,7 @@ class UserController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, `Invalid data ${errors.array()[0].msg}`, errors.array()));
 
             const { username, password } = req.body;
 
@@ -66,18 +66,20 @@ class UserController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Invalid information", errors.array()));
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, `Invalid data ${errors.array()[0].msg}`, errors.array()));
 
             const userId = req.headers.user as string;
-            const imagePath = req.file?.filename as string;
+            const imagePath = req.file?.originalname as string;
+            const buffer = req.file?.buffer as Buffer;
 
-            await staticService.uploadProfileImage(userId, imagePath);
+            await staticService.uploadProfileImage(userId, imagePath, buffer);
 
             return res.status(200).json({success: true, image: imagePath});
         } catch(err: unknown) {
-            const imagePath = req.file?.filename as string;
+            console.log("ERRRRRRRRRRRRRRRRRRRRRRRRRRRr", err);
+            const imagePath = req.file?.originalname as string;
 
-            if (imagePath !== "") await staticService.removeImage(imagePath);
+            await staticService.removeImage(imagePath);
 
             next(err);
         }
@@ -87,7 +89,7 @@ class UserController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, `Invalid request data: ${errors}`, errors.array()));
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, `Invalid data: ${errors.array()[0].msg}`, errors.array()));
            
             const userId = req.headers.user as string;
             const username = req.body.username;
@@ -104,7 +106,7 @@ class UserController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, `Invalid request data: ${errors}`, errors.array()));
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, `Invalid data: ${errors.array()[0].msg}`, errors.array()));
 
             const userId = req.headers.user as string;
             const [current_password, password, repeat_password] = [req.body.current_password, req.body.password, req.body.repeat_password];

@@ -54,7 +54,6 @@ export interface IVerify {
     ROOM: IRoomSocket, 
     MESSAGES: IMessage[], 
     MEMBERIN: Array<Omit<IRoom, 'password' | 'image' | 'participants'>>
-    errorMessage: string,
 }
 
 export interface IGetInfo {

@@ -12,7 +12,7 @@ const SALT = process.env.SALT as string;
 class UserService {
     async register(username: string, passwd: string, repeatPasswd: string): Promise<IRegister> {
         const isUser = await UserModel.findOne({username}, {password: 0, image: 0, usernameChanges: 0})
-        .catch(err => {throw ApiError.BadRequest(500, "Fatal error trying to find this user")});
+        .catch(() => {throw ApiError.BadRequest(500, "Fatal error trying to find this user")});
 
         if (isUser) throw ApiError.BadRequest(400, "This username is already taken");
         if (passwd !== repeatPasswd) throw ApiError.BadRequest(400, "Passwords do not match");
@@ -22,7 +22,7 @@ class UserService {
         const user = await UserModel.create({
             username: username,
             password: passwordHash
-        }).catch(err => {throw ApiError.BadRequest(500, "Fatal error trying to register the account")});
+        }).catch(() => {throw ApiError.BadRequest(500, "Fatal error trying to register the account")});
 
         const accessToken = await tokenService.generate({id: String(user._id)});
 
@@ -33,7 +33,7 @@ class UserService {
 
     async login(username: string, passwd: string): Promise<string> {
         const user = await UserModel.findOne({username})
-        .catch(err => {throw ApiError.BadRequest(500, "Fatal error trying to find the user")});
+        .catch(() => {throw ApiError.BadRequest(500, "Fatal error trying to find the user")});
 
         if (!user) throw ApiError.BadRequest(400, "Username or password is incorrect");
 
@@ -48,7 +48,7 @@ class UserService {
 
     async getUser(_id: string): Promise<Omit<IUser, 'password'>> {
         const user = await UserModel.findOne({_id}, {password: 0})
-        .catch(err => {throw ApiError.BadRequest(500, "Fatal Error trying to find this user")});
+        .catch(() => {throw ApiError.BadRequest(500, "Fatal Error trying to find this user")});
 
         if (!user) throw ApiError.BadRequest(400, "Username or password is incorrect");
 
@@ -57,7 +57,7 @@ class UserService {
 
     async updateProfileUsername(id: string, newUsername: string): Promise<string> {
         const user = await UserModel.findOne({_id: id})
-        .catch(err => { throw ApiError.BadRequest(500, "Fatal error occurred when trying to upadte the user profile")});
+        .catch(() => { throw ApiError.BadRequest(500, "Fatal error occurred when trying to upadte the user profile")});
 
         if (!user) throw ApiError.BadRequest(400, "Unable to update user profile");
         if (newUsername === user.username) throw ApiError.BadRequest(400, "This is you're current username");
@@ -75,7 +75,7 @@ class UserService {
         if (password !== repeat_password) throw ApiError.BadRequest(400, "Passwords do not match");
 
         const user = await UserModel.findOne({_id: id})
-        .catch(err => { throw ApiError.BadRequest(500, "Fatal error occured when trying to search for this user")});
+        .catch(() => { throw ApiError.BadRequest(500, "Fatal error occured when trying to search for this user")});
 
         if (!user) throw ApiError.BadRequest(400, "Unable to find this user");
         

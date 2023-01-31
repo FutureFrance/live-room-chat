@@ -1,4 +1,5 @@
 import { IUser } from "../../interfaces";
+import "./styles.css";
 
 interface IProps {
     users: IUser[]

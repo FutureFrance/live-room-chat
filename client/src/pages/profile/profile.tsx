@@ -1,3 +1,4 @@
+import "./styles.css";
 import { useState } from 'react';
 import { apiService } from "../../api";
 import Modal from '../../components/modal';
@@ -16,7 +17,6 @@ const Profile = () => {
     const [apiResponse, setApiResponse] = useState<string>("");
     const [requestSuccess, setRequestSuccess] = useState<boolean>(false);
     
-
     async function changeUsername(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         try {
@@ -90,7 +90,6 @@ const Profile = () => {
                     <h5>Current Password</h5>
                     <div id="modify_password">
                         <input className="current_password" type="password" 
-                            value={currentPassword}
                             onChange={(e) => {setCurrentPassword(e.target.value)}}    
                         />
                         <button type="submit" onClick={() => setModalOn(true)}>Change</button>
@@ -129,6 +128,7 @@ const Profile = () => {
                 </form>
                 </> 
             </Modal>}
+            
             <p id="modify_response" className={requestSuccess ? "success" : "err"}>{apiResponse}</p>
         </>
     )

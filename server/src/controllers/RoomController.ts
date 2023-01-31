@@ -10,7 +10,7 @@ class RoomController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, `Invalid data ${errors.array()[0].msg}`, errors.array()));
 
             const {room_name, password, repeat_password} = req.body;
             const user = req.headers.user as string;
@@ -27,7 +27,7 @@ class RoomController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, `Invalid data ${errors.array()[0].msg}`, errors.array()));
             
             const { room_name, room_password } = req.body;
             const user = req.headers.user as string;
@@ -56,19 +56,20 @@ class RoomController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, `Invalid data ${errors.array()[0].msg}`, errors.array()));
 
             const { room_name } = req.body;
             const userId = req.headers.user as string;
-            const imagePath = req.file?.filename as string;
+            const imagePath = req.file?.originalname as string;
+            const buffer = req.file?.buffer as Buffer;
 
-            await staticService.uploadRoomImage(imagePath, room_name, userId);
+            await staticService.uploadRoomImage(imagePath, room_name, userId, buffer);
 
             return res.status(200).json({success: true});
-        } catch(err: unknown) { // think if you need to check whether the owner is trying to delete or any user 
-            const imagePath = req.file?.filename as string;
+        } catch(err: unknown) { 
+            const imagePath = req.file?.originalname as string;
 
-            if (imagePath !== "") await staticService.removeImage(imagePath);
+            await staticService.removeImage(imagePath);
 
             next(err);
         }
@@ -78,7 +79,7 @@ class RoomController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, `Invalid data ${errors.array()[0].msg}`, errors.array()));
 
             const query = req.query.query as string;
             const room = req.query.room as string;
@@ -96,7 +97,7 @@ class RoomController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, `Invalid data ${errors.array()[0].msg}`, errors.array()));
 
             const userId = req.headers.user as string;
             const [roomId, roomName] = [req.body.room, req.body.room_name];
@@ -113,7 +114,7 @@ class RoomController {
         try {
             const errors = validationResult(req);
 
-            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, "Incorrect information", errors.array()));
+            if (!errors.isEmpty()) throw next(ApiError.BadRequest(400, `Invalid data ${errors.array()[0].msg}`, errors.array()));
 
             const userId = req.headers.user as string;
             const [roomId, current_password, roomPassword, roomRepeatPassword] = [req.body.roomId, req.body.current_password, req.body.roomPassword, req.body.roomRepeatPassword];

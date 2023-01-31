@@ -1,3 +1,4 @@
+import "./styles.css";
 import { useState } from 'react';
 import Modal from '../../components/modal';
 import RoomActionsModal from '../../components/roomActionsModal';
@@ -8,7 +9,10 @@ const Lobby = () => {
 
     return (
         <>
-            <Rooms setModal={setIsModal}/>
+            <div className="lobby_rooms_section">
+                <Rooms setModal={setIsModal}/>
+            </div>
+            
             {isModal &&
                 <Modal setModalOn={setIsModal}>
                     <RoomActionsModal />

@@ -10,8 +10,8 @@ const Room = ({room}: IProp) => {
 
     return (
         <div onClick={() => navigate(`/chat/${room._id}`, { replace: true})} className="room_name">
-            <div className="room-profile" tabIndex={0}>      
-                <div className="room-profile-content" tabIndex={0}> 
+            <div className="room_profile" tabIndex={0}>      
+                <div className="room_profile-content" tabIndex={0}> 
                     {room.image 
                         ? <img src={`http://${process.env.REACT_APP_HOSTNAME}:3003/static/${room.image}`} alt="" />
                         : <img src={`http://${process.env.REACT_APP_HOSTNAME}:3003/static/N.jpg`} alt="" />
