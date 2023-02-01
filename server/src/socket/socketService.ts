@@ -1,7 +1,7 @@
 import fs from 'fs';
 import * as cp from 'node:child_process';
 import sharp from 'sharp';
-const join = require('path').join;
+import path from 'path';
 import { IMessage } from "../../interfaces";
 import MessageModel from "../models/MessageModel";
 import { SocketError } from './errorHandling';
@@ -41,7 +41,7 @@ class SocketService {
         if (isVideo.includes(fileExt) && fileSize > 21000000) throw new SocketError("Video size can't be larger then 20MB");
         if (isImage.includes(fileExt) && fileSize > 5100000) throw new SocketError("Image size cant be higher then 5MB");
         
-        let imagePath = `${Date.now() + filename}`;
+        let imagePath = `${Date.now()}${filename}`;
 
         if (isImage.includes(fileExt)) { 
             await sharp(buffer).resize().jpeg({ quality: 69 }).toFile(`./static/${imagePath}`);
@@ -50,12 +50,13 @@ class SocketService {
                 if (err) throw new SocketError("Unable to upload this file"); 
             });
 
-            const child = cp.fork(join(__dirname, './compressVideo'));
+            const child = cp.fork(path.join(__dirname, '/compressVideo'));
 
             child.send({ tempFilePath: `./static/${imagePath}`, fileName: filename });
 
-            child.on("message", (message: string) => {      
-                if (message === "Compressing Error") throw new Error("Unable to upload the file");
+            child.on("message", (data: {message: string, finalPath: string}) => {      
+                if (data.message === "Error") console.log("Unable to upload the file");
+                return data.finalPath;
             });
         }
         return imagePath;        
