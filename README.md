@@ -10,8 +10,8 @@ The concept of the app is easy to understand as the repository name implies this
 -When creating a room you must provide a room_name and a room password room_name must be unique, and a room image optionally\
 -If you want to join the room you will have to provide the right room_name and password\
 -After creating/joining a room you get directed to /chat/?id and you get to see the chat interface\
--In the chat you can write messages, upload images and videos, switch between all the rooms you are member of and you're able to upload an image / video with text in the same message
--You have search bar where you can get to any message back by typing letters that were apart of that message\ 
+-In the chat you can write messages, upload images and videos, switch between all the rooms you are member of and you're able to upload an image / video with text in the same message\
+-You have search bar where you can get to any message back by typing letters that were apart of that message
 -Also there is a pannel where you can see all the members of them room + see live if they are online or offline\
 -Latest person of room that is typing you will see an animation of him typing live\
 -There is an upload limit of 5MB per image and 20MB for a video currently\
@@ -20,7 +20,7 @@ The concept of the app is easy to understand as the repository name implies this
 **Technologies used:**
 
 **TypeScript**\
-Front -> React
+Front -> React\
 Back -> Express, MongoDb, Socket.io, Docker to containerize the application and as production deployement i used AWS
 
 Currently i host the app on AWS and currently you can visit the app at http://54.146.58.54:3000/register
