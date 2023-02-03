@@ -2,7 +2,7 @@ import fs from 'fs';
 import * as cp from 'node:child_process';
 import sharp from 'sharp';
 import path from 'path';
-import { IMessage } from "../../interfaces";
+import { IMessage } from "../interfaces";
 import MessageModel from "../models/MessageModel";
 import { SocketError } from './errorHandling';
 

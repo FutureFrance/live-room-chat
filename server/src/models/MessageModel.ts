@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IMessage } from '../../interfaces';
+import { IMessage } from '../interfaces';
 
 interface IMessageModel extends IMessage, Document {}
 

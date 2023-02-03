@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import { ObjectId } from 'mongodb';
 import { Types } from 'mongoose';
 import { ApiError } from "../errorHandlers/apiErrorHandler";
-import { IMessage, IRoom } from '../../interfaces';
+import { IMessage, IRoom } from '../interfaces';
 import RoomModel from "../models/RoomModel";
 import UserModel from '../models/UserModel';
 import MessageModel from '../models/MessageModel';

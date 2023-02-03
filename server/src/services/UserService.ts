@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import { ApiError } from "../errorHandlers/apiErrorHandler";
-import { IRegister, IUser } from '../../interfaces';
+import { IRegister, IUser } from '../interfaces';
 import UserModel from "../models/UserModel";
 import { tokenService } from './TokenService';
 

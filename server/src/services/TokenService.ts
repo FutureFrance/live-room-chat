@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { ApiError } from '../errorHandlers/apiErrorHandler';
-import { ITokenPayload } from '../../interfaces';
+import { ITokenPayload } from '../interfaces';
 
 dotenv.config()
 

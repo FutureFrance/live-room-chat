@@ -1,0 +1,17 @@
+services: 
+  chat-back-end:
+    build: .
+    ports:
+      - "3003:3003"
+    volumes:
+      - /tmp
+    networks:
+      - default
+      - live-chat
+  
+networks:
+  default:
+    driver: bridge
+  live-chat:
+    external: true
+

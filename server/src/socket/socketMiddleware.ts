@@ -1,11 +1,11 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { Types } from 'mongoose';
-import { ITokenPayload, IPopulateParticipants } from '../../interfaces';
+import { ITokenPayload, IPopulateParticipants } from '../interfaces';
 import MessageModel from "../models/MessageModel";
 import RoomModel from "../models/RoomModel";
 import UserModel from "../models/UserModel";
-import { IVerify } from "../../interfaces";
+import { IVerify } from "../interfaces";
 import { SocketError } from './errorHandling';
 
 dotenv.config();

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, response } from 'express';
 import { validationResult } from 'express-validator';
 import { ApiError } from '../errorHandlers/apiErrorHandler';
-import { IRoom, IRequest, IMessage } from '../../interfaces';
+import { IRoom, IRequest, IMessage } from '../interfaces';
 import { roomService } from '../services/RoomService';
 import { staticService } from '../services/staticService';
 

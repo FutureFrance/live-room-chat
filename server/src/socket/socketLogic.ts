@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { IUser, IRoomSocket, IMessage, IRoom } from "../../interfaces";
+import { IUser, IRoomSocket, IMessage, IRoom } from "../interfaces";
 import { verifyUser } from "./socketMiddleware";
 import SocketService from "./socketService";
 
@@ -21,7 +21,7 @@ export function chat(io: any): void {
             let roomMembersOnline: Array<Omit<IUser, 'password'>> = [];
             let roomMembersOffline: Array<Omit<IUser, 'password'>> = [];
 
-            ROOM.participants.map((member) => SESSIONS.includes(member.username)
+            ROOM.participants.map((member: Omit<IUser, 'password'>) => SESSIONS.includes(member.username)
             ? roomMembersOnline.push({...member, online: true}) 
             : roomMembersOffline.push({...member, online: false}));
 

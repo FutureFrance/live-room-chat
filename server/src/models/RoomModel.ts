@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IRoom, DocumentResult } from '../../interfaces';
+import { IRoom, DocumentResult } from '../interfaces';
 
 interface IRoomModel extends IRoom, Document, DocumentResult<IRoom> {}
 

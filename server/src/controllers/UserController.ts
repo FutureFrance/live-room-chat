@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { ApiError } from '../errorHandlers/apiErrorHandler';
-import { IUser } from '../../interfaces';
+import { IUser } from '../interfaces';
 import { userService } from '../services/UserService';
 import { staticService } from '../services/staticService';
 
