@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN apt update
+RUN apt install vim
 RUN npm install
 RUN npm run build
 RUN npm install pm2 --global

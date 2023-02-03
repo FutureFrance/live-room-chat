@@ -1,8 +1,10 @@
+version: '3.7'
+
 services:
   front-chat:
     build: .
     ports:
-      -  "3000:3000"
+      - "3000:3000"
     volumes:
       - /tmp
     networks:
