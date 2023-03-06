@@ -22,8 +22,6 @@ The concept of the app is easy to understand, as the repository name implies thi
 
 **TypeScript**\
 Front -> React\
-Back -> Express, MongoDb, Socket.io, Docker to containerize the application and as production deployement i used AWS
+Back -> Express, MongoDb, Socket.io, Docker to containerize the application and as production deployment i used AWS
 
-Currently i host the app on AWS and currently you can visit the app at http://54.146.58.54:3000/register
-
-*In case i will restart the machine the ip will change cause is dinamic allocated currently so you might want to look in this README for changes to the url if that happens : )
+Currently not hosting the app
